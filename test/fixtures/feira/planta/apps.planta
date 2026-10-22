@@ -1,0 +1,25 @@
+app Api kind backend framework nestjs root "/apps/api/src" {
+  contains Mercado
+}
+
+app Worker kind worker root "/apps/worker/src" {
+  component Roteirizador @"roteirizar.ts" {
+    op roteirizar(cestaId: uuid) -> json
+  }
+}
+
+app Web kind spa framework angular root "/apps/web/src/app" {
+  route "/" => Vitrine
+  route "/produtores/:id" => PaginaProdutor
+  route "/cesta" => PaginaCesta guard Autenticado
+
+  page Vitrine @"pages/vitrine.component.ts#VitrineComponent" {
+    calls Mercado.Rest.daEstacao
+  }
+  page PaginaProdutor @"pages/produtor.component.ts#ProdutorComponent"
+  page PaginaCesta @"pages/cesta.component.ts#CestaComponent" {
+    calls Mercado.Rest.fechar
+  }
+
+  guard Autenticado @"guards/autenticado.guard.ts#autenticado"
+}

@@ -1,0 +1,4 @@
+<h1>Da estação</h1>
+@for (p of produtos$ | async; track p.id) {
+  <feira-card-produto [produto]="p" />
+}

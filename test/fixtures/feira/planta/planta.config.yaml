@@ -1,0 +1,24 @@
+version: 1
+system: Feira
+projectRoot: ..
+
+extractors:
+  - use: nestjs
+    root: apps/api/src
+  - use: typeorm
+    root: apps/api/src
+  - use: angular
+    root: apps/web/src
+  - use: imports
+    root: apps
+  - use: compose
+    root: docker-compose.yml
+
+coverage:
+  require:
+    - entity
+    - http.endpoint
+    - event.handler
+  warn:
+    - service
+    - iac.resource

@@ -1,0 +1,15 @@
+deployment local provider docker source compose "/docker-compose.yml" {
+  api: docker.container runs Api @"compose:api"
+  worker: docker.container runs Worker replicas 2 @"compose:worker" {
+    image = "feira/worker:0.1"
+  }
+  web: docker.container runs Web @"compose:web"
+  db: docker.container @"compose:postgres" {
+    image = "postgres:16"
+  }
+  redis: docker.container @"compose:redis"
+
+  api -> db "TCP 5432"
+  api -> redis "fila entregas"
+  worker -> redis
+}

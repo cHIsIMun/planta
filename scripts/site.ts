@@ -268,7 +268,7 @@ export class ClientesService {
 <section class="wrap more">
   <h2>Um modelo, várias saídas</h2>
   <p>Do mesmo modelo saem diagramas Mermaid e D2, a matriz de rastreabilidade de requisitos, OpenAPI 3.1 e Structurizr. Agentes de IA consultam a arquitetura pelo servidor MCP, e a extensão do VS Code traz diagnósticos, navegação e completar de âncoras.</p>
-  <p class="stack">NestJS, TypeORM, React, Next.js, Django, FastAPI, Spring, Terraform, AWS CDK, Kubernetes e Docker Compose.</p>
+  <p class="stack">NestJS, TypeORM, React, Next.js, Angular, Django, FastAPI, Spring, Terraform, AWS CDK, Kubernetes e Docker Compose.</p>
 </section>
 
 <section class="wrap start">

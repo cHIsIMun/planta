@@ -31,7 +31,7 @@ function apps(ctx: ValidationContext): App[] {
 const under = (file: string, root: string) => root === "" || file === root || file.startsWith(`${root}/`);
 
 /** Extratores que leem frontend (ou plugins que emitem fatos `ui.*`). */
-const FRONTEND_EXTRACTORS = new Set(["react", "nextjs"]);
+const FRONTEND_EXTRACTORS = new Set(["react", "nextjs", "angular"]);
 
 /** Algum extrator lê o código do app; sem isso não há evidência a favor nem contra. */
 function observed(ctx: ValidationContext, app: App): boolean {

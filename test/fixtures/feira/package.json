@@ -1,0 +1,1 @@
+{ "name": "feira", "private": true, "workspaces": ["apps/*"] }

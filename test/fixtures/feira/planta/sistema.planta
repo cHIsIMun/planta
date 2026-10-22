@@ -1,0 +1,11 @@
+system Feira {
+  description "Feira livre online: produtores da região, cestas da estação e entrega em janelas"
+}
+
+layer apresentacao match "**/*.controller.ts", "**/*.publisher.ts"
+layer aplicacao    match "**/*.service.ts"
+layer dominio      match "**/*.entity.ts"
+layer infra        match "**/*.repository.ts"
+
+actor Cliente "Quem monta e recebe a cesta"
+actor Produtor "Sítio que vende pela feira"

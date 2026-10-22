@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+  redis:
+    image: redis:7
+  api:
+    build: ./apps/api
+    depends_on: [postgres, redis]
+  worker:
+    build: ./apps/worker
+    image: feira/worker:0.1
+    deploy:
+      replicas: 2
+    depends_on: [redis]
+  web:
+    build: ./apps/web

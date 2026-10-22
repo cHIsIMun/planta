@@ -65,10 +65,10 @@ npx planta ci github --write  # workflow de PR: anotações, diff e diagramas
 
 `npx planta --help` lista todos os comandos. A configuração fica em
 `planta/planta.config.yaml`; os projetos em [`test/fixtures`](test/fixtures)
-são exemplos completos (NestJS + React + Terraform, Django, Spring, FastAPI,
-Next.js, CDK/Kubernetes/Compose).
+são exemplos completos (NestJS + React + Terraform, NestJS + Angular + worker,
+Django, Spring, FastAPI, Next.js, CDK/Kubernetes/Compose).
 
-Extratores incluídos: NestJS, TypeORM, React, Next.js, Django, FastAPI,
+Extratores incluídos: NestJS, TypeORM, React, Next.js, Angular, Django, FastAPI,
 Spring, imports (TS/Python), Terraform, AWS CDK, Kubernetes, Docker Compose e
 requisitos/decisões em Markdown. Regras e extratores próprios podem ser
 escritos como plugins com `planta/sdk`.

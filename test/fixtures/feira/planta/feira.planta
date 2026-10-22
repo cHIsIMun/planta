@@ -1,0 +1,101 @@
+/// Produtores, produtos da estação e cestas.
+context Mercado root "/apps/api/src" {
+
+  enum Estacao @"produtores/produto.entity.ts#Estacao" {
+    Verao, Outono, Inverno, Primavera
+  }
+
+  entity Produtor @"produtores/produtor.entity.ts#Produtor" {
+    id: uuid key
+    nome: string max(120)
+    sitio: string
+    produtos: Produto[] inverse(produtor)
+  }
+
+  entity Produto @"produtores/produto.entity.ts#Produto" {
+    id: uuid key
+    nome: string
+    precoKg: decimal precision(10, 2)
+    estacao: Estacao
+    produtor: Produtor inverse(produtos)
+  }
+
+  entity Cesta @"cestas/cesta.entity.ts#Cesta" {
+    id: uuid key
+    clienteEmail: email
+    itens: json
+    status: string
+    janelaEntrega: string?
+    criadaEm: datetime
+  }
+
+  dto CriarCestaDto @"cestas/dto/criar-cesta.dto.ts#CriarCestaDto"
+
+  controller ProdutoresController @"produtores/produtores.controller.ts#ProdutoresController" {
+    op listar() -> Produtor[]
+    op daEstacao(estacao: string) -> Produto[]
+    uses ProdutoresService
+  }
+
+  service ProdutoresService @"produtores/produtores.service.ts#ProdutoresService" {
+    op listar() -> Produtor[]
+    op daEstacao(estacao: string) -> Produto[]
+  }
+
+  controller CestasController @"cestas/cestas.controller.ts#CestasController" {
+    op montar(dto: CriarCestaDto) -> Cesta
+    op fechar(id: uuid) -> Cesta
+    uses CestasService
+  }
+
+  service CestasService @"cestas/cestas.service.ts#CestasService" {
+    op montar(dto: CriarCestaDto) -> Cesta
+    op fechar(id: uuid) -> Cesta
+    uses CestaRepository
+  }
+
+  repository CestaRepository @"cestas/cesta.repository.ts#CestaRepository" {
+    op salvar(cesta: Cesta) -> Cesta
+    op buscar(id: uuid) -> Cesta?
+  }
+
+  component EntregasPublisher @"entregas/entregas.publisher.ts#EntregasPublisher" {
+    op enfileirar(evento: CestaFechada)
+  }
+
+  api Rest http base "/api" {
+    endpoint GET "/produtores" => ProdutoresController.listar {
+      returns 200 Produtor[]
+    }
+    endpoint GET "/produtores/produtos" => ProdutoresController.daEstacao {
+      param estacao: string in query
+      returns 200 Produto[]
+    }
+    endpoint POST "/cestas" => CestasController.montar {
+      body CriarCestaDto
+      returns 201 Cesta
+    }
+    endpoint POST "/cestas/:id/fechar" => CestasController.fechar {
+      param id: uuid in path
+      returns 201 Cesta
+    }
+  }
+
+  channel entregas kind queue
+
+  event CestaFechada {
+    cestaId: uuid
+  }
+
+  on CestaFechada => EntregasPublisher.enfileirar
+
+  process FecharCesta {
+    actor Cliente
+    trigger Rest.fechar
+    verify order
+
+    step fechar: CestasService.fechar
+    step avisar: emit CestaFechada
+    return Cesta
+  }
+}

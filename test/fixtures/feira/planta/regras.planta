@@ -1,0 +1,13 @@
+rule Camadas severity error {
+  layer apresentacao may depend on layer aplicacao
+  layer apresentacao may depend on layer dominio
+  layer aplicacao may depend on layer dominio
+  layer aplicacao may depend on layer infra
+  layer infra may depend on layer dominio
+  layer dominio must not depend on layer infra
+}
+
+rule Fronteiras severity error {
+  app Web must not depend on context Mercado except via endpoint
+  app Worker must not depend on app Api
+}

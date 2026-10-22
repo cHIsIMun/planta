@@ -2182,7 +2182,8 @@ O requisito de pureza de `extractFile` permite cache por hash de conteúdo: em u
 | `express` | `app.get/post/...`, `Router` | `http.endpoint` |
 | `react` | JSX, `react-router` / TanStack Router, `fetch`/`axios`/React Query/SWR, Zustand/Redux | `ui.route`, `ui.page`, `ui.component`, `ui.render`, `http.client`, `ui.store` |
 | `nextjs` | Árvore `app/` e `pages/`, route handlers, server actions | `ui.route`, `ui.page`, `http.endpoint` |
-| `vue` / `angular` | Roteadores, SFC/componentes, serviços HTTP | `ui.*`, `http.client` |
+| `angular` | `Routes`/`forRoot`/`provideRouter` (com `loadComponent`, `loadChildren` e guards), `@Component` e seletores no template, serviços com `HttpClient`, NgRx | `ui.route`, `ui.page`, `ui.component`, `ui.render`, `http.client`, `ui.store` |
+| `vue` | Vue Router, SFC, chamadas HTTP | `ui.*`, `http.client` |
 | `imports` | Imports/requires de qualquer linguagem suportada pelo tree-sitter | `import`, `call` |
 | `openapi` | Arquivos OpenAPI 3.x | `http.endpoint`, `dto` |
 | `terraform` | HCL e, opcionalmente, `terraform show -json` | `iac.resource`, `iac.reference` |
@@ -2193,7 +2194,9 @@ O requisito de pureza de `extractFile` permite cache por hash de conteúdo: em u
 
 - **`spring`** lê Java (resolvedor próprio: `Classe.metodo`, campos e, com sobrecarga, `Classe.metodo(Tipo1,Tipo2)`). Injeção por construtor (o único ou o `@Autowired`), por `@Autowired` em campo e por Lombok (`@RequiredArgsConstructor`); interfaces de Spring Data são componentes. Em entidades JPA, um campo só é opcional quando o código diz (`@Column(nullable = true)`, `@Nullable`, `Optional<T>`), como no TypeORM. `server.servlet.context-path` fica fora do código: use a opção `prefix` do extrator. Chamadas entre métodos e `publishEvent`/`send` alimentam `verify calls` e `PL332`/`PL333`. `PL417` compara parâmetros e retorno em Java como em TypeScript.
 - **`fastapi`** encadeia os prefixos de `APIRouter(prefix=...)` e `include_router(..., prefix=...)`. O parâmetro cujo tipo é modelo Pydantic é o corpo; `Depends(x)` é injeção. Os modelos Pydantic viram fatos `dto` com campos, comparados com o `dto` da planta como os de entidade.
+- Sem um extrator de frontend (`react`, `nextjs`, `angular`) cujo `root` cubra o app, as rotas, `calls`, `renders` e stores declarados não são conferidos: não há evidência a favor nem contra.
 - **`nextjs`** deriva as rotas da árvore: grupos `(x)` não entram no caminho, `[slug]` vira `:slug`, `[...x]` vira `*`, pastas `_x` e slots `@x` não são rotas. Os handlers de `route.ts` e de `pages/api` têm assinatura imposta pelo framework, e por isso não passam por `PL417`. Componentes, renderização e chamadas HTTP vêm do extrator `react`, que pode rodar na mesma pasta.
+- **`angular`** junta o caminho das rotas filhas e das listas carregadas por `loadChildren`; guards de `canActivate`, `canMatch` e `canActivateChild` são herdados pelas filhas. Um componente renderiza outro quando o seletor dele aparece no template (inline ou em `templateUrl`). Serviços contam pelo método: o componente que chama `this.api.fecharCesta()` faz o HTTP que `FeiraApi.fecharCesta` faz pelo `HttpClient` injetado (por `inject(T)` ou pelo construtor). Campos de string da classe (`base = '/api'`) entram na URL; uma base que não se resolve no início (`environment.apiUrl`) vale como vazia.
 - **`aws-cdk`** lê os templates do `cdk synth` (`cdk.out/*.template.json`). O endereço é o caminho do construct sem o `/Resource` final; os caminhos intermediários são agrupadores, como os módulos do Terraform. `Ref` e `Fn::GetAtt` viram referências, de modo que `cpu` de um `aws.ecs.service` é conferido na task definition referenciada.
 - **`kubernetes`** lê manifestos YAML com vários documentos (inclusive a saída de `helm template`). O endereço é `Kind/namespace/nome`, e são conferidos `replicas`, `image` e `schedule`.
 - **`compose`** lê os serviços de `docker-compose.yml`/`compose.yaml`, com `image` e `deploy.replicas`.

@@ -22,6 +22,7 @@ import { django } from "./extractors/django.ts";
 import { javaToPlanta, spring } from "./extractors/spring.ts";
 import { fastapi } from "./extractors/fastapi.ts";
 import { nextjs } from "./extractors/nextjs.ts";
+import { angular } from "./extractors/angular.ts";
 import { cdk } from "./extractors/cdk.ts";
 import { kubernetes } from "./extractors/kubernetes.ts";
 import { compose } from "./extractors/compose.ts";
@@ -42,7 +43,7 @@ import type { DependencyGraph } from "./rules/graph.ts";
 import { loadPlugins, runPluginRules } from "./plugins.ts";
 import { validateEvents, verifyProcesses } from "./rules/process.ts";
 
-export const EXTRACTORS: Record<string, Extractor> = { nestjs, typeorm, django, react, terraform, imports, spring, fastapi, nextjs, "aws-cdk": cdk, kubernetes, compose };
+export const EXTRACTORS: Record<string, Extractor> = { nestjs, typeorm, django, react, angular, terraform, imports, spring, fastapi, nextjs, "aws-cdk": cdk, kubernetes, compose };
 
 /** Tipos de elemento e os tipos de símbolo em que podem ser ancorados (PL209). */
 const ANCHOR_KINDS: Record<string, readonly CodeSymbol["kind"][]> = {
