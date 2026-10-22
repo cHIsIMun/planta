@@ -30,6 +30,15 @@ function apps(ctx: ValidationContext): App[] {
 
 const under = (file: string, root: string) => root === "" || file === root || file.startsWith(`${root}/`);
 
+/** Extratores que leem frontend (ou plugins que emitem fatos `ui.*`). */
+const FRONTEND_EXTRACTORS = new Set(["react", "nextjs"]);
+
+/** Algum extrator lê o código do app; sem isso não há evidência a favor nem contra. */
+function observed(ctx: ValidationContext, app: App): boolean {
+  return ctx.config.extractors.some((e) => FRONTEND_EXTRACTORS.has(e.use) && (under(app.root, e.root) || under(e.root, app.root)))
+    || ctx.facts.some((f) => f.kind.startsWith("ui.") && under(f.location.file, app.root));
+}
+
 /** Nome do símbolo de código de um elemento: o resolvido, ou o da âncora. */
 function unitOf(ctx: ValidationContext, id: string): string | undefined {
   return ctx.resolved.get(id)?.symbol.name ?? ctx.elements[id]?.anchor?.symbol;
@@ -42,6 +51,7 @@ function unitOf(ctx: ValidationContext, id: string): string | undefined {
 export function matchRoutes(ctx: ValidationContext): void {
   const routes = ctx.facts.filter((f) => f.kind === "ui.route");
   for (const app of apps(ctx)) {
+    if (!observed(ctx, app)) continue;
     const inApp = routes.filter((f) => under(f.location.file, app.root));
     if (inApp.length === 0 && app.decl.routes.length === 0) continue;
     const planned = ctx.elements[app.id]!.meta.status === "planned";
@@ -108,6 +118,7 @@ export function validateFrontend(ctx: ValidationContext): void {
   const endpointOf = (f: Fact) => endpoints.get(routeKey(String(f.data.method), String(f.data.path)));
 
   for (const app of apps(ctx)) {
+    if (!observed(ctx, app)) continue;
     const inApp = (f: Fact) => under(f.location.file, app.root);
     for (const f of clients.filter(inApp)) {
       if (endpointOf(f)) ctx.cover(f.id);

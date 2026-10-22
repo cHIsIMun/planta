@@ -11,6 +11,7 @@ import { main } from "../src/cli.ts";
 import { CodeParser } from "../src/code/index.ts";
 import { react } from "../src/extractors/react.ts";
 import { terraform } from "../src/extractors/terraform.ts";
+import { typeorm } from "../src/extractors/typeorm.ts";
 import { codeLenses } from "../src/lsp/actions.ts";
 import { complete } from "../src/lsp/completion.ts";
 import { definition } from "../src/lsp/features.ts";
@@ -92,6 +93,21 @@ describe("extrator react", () => {
   });
 });
 
+describe("extrator typeorm", () => {
+  it("coluna JSON é um valor só, mesmo com tipo TS de array", async () => {
+    const files = await parsed({
+      "cesta.entity.ts": `@Entity() export class Cesta {
+        @Column('jsonb') itens: { produtoId: string }[];
+        @Column({ type: 'simple-json' }) tags: string[];
+        @Column('text', { array: true }) notas: string[];
+      }`,
+    });
+    const entity = typeorm.extract(files, { use: "typeorm", root: "" }).find((f) => f.kind === "entity")!;
+    const fields = entity.data.fields as { name: string; type: string; list: boolean }[];
+    assert.deepEqual(fields.map((f) => [f.name, f.type, f.list]), [["itens", "json", false], ["tags", "json", false], ["notas", "text", true]]);
+  });
+});
+
 describe("extrator terraform", () => {
   it("módulo local entra com prefixo; referências e literais", async () => {
     const files = await parsed({
@@ -137,6 +153,13 @@ describe("projeto full stack", () => {
 });
 
 describe("frontend contra o código", () => {
+  it("sem extrator que leia o app (Angular, por exemplo), rotas e chamadas não são acusadas", async () => {
+    const root = copy();
+    edit(root, "planta/planta.config.yaml", (t) => t.replace(/  - use: react\n    root: apps\/web\/src\n/, ""));
+    const found = (await codes(root)).filter((c) => ["PL320", "PL321", "PL240", "PL241", "PL242"].includes(c));
+    assert.deepEqual(found, []);
+  });
+
   it("PL320: rota registrada no código sem route", async () => {
     const root = copy();
     edit(root, "apps/web/src/App.tsx", (t) => t.replace('<Route path="/cadastro"', '<Route path="/promocoes" element={<Home />} />\n        <Route path="/cadastro"'));

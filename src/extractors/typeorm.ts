@@ -11,7 +11,7 @@ const COLUMN_TYPES: Record<string, string> = {
   int: "int", integer: "int", smallint: "int", bigint: "long", decimal: "decimal", numeric: "decimal",
   float: "float", double: "float", real: "float", boolean: "bool", bool: "bool",
   date: "date", time: "time", timestamp: "datetime", timestamptz: "datetime", datetime: "datetime",
-  json: "json", jsonb: "json", bytea: "bytes", blob: "bytes",
+  json: "json", jsonb: "json", "simple-json": "json", bytea: "bytes", blob: "bytes",
 };
 
 /** Tipo TypeScript → tipo Planta, quando a coluna não diz nada mais preciso. */
@@ -76,6 +76,8 @@ function field(node: Node, decorators: Node[], name: string): FieldFact[] {
   // `@Column('decimal', {...})` ou `@Column({ type: 'decimal' })`.
   const dbType = stringValue(column.args[0]) ?? stringValue(options.get("type"));
   if (dbType && COLUMN_TYPES[dbType] && !modifiers.key) type = COLUMN_TYPES[dbType];
+  // Uma coluna JSON é um valor só, mesmo quando o tipo TS é um array.
+  if (type === "json") list = false;
   // `@Column(() => Endereco)`: objeto de valor embutido.
   const embedded = column.args[0]?.type === "arrow_function" ? column.args[0].childForFieldName("body")?.text : undefined;
   if (embedded) type = embedded;
