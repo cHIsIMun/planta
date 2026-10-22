@@ -4,7 +4,7 @@
   "description": "Linguagem de especificação arquitetural ancorada em código: diagnósticos, completar de âncoras, navegação e CodeLens no código.",
   "version": "0.1.0",
   "publisher": "planta",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cHIsIMun/planta.git",

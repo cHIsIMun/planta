@@ -102,3 +102,7 @@ O workflow `release` testa, empacota a CLI e a extensão e cria o release com
 os dois arquivos. Se o segredo `NPM_TOKEN` estiver configurado no repositório,
 ele também publica o pacote no npm, e a instalação passa a ser
 `npm install -D planta`.
+
+## Licença
+
+[MIT](LICENSE) © Lucas Vinicius

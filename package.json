@@ -12,7 +12,7 @@
     "arquitetura"
   ],
   "author": "Lucas Vinicius (https://github.com/cHIsIMun)",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cHIsIMun/planta.git"
