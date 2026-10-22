@@ -1,0 +1,60 @@
+context Vendas root "/backend/vendas" {
+
+  enum StatusPedido @"models.py#StatusPedido" { ABERTO, PAGO, CANCELADO }
+
+  entity Cliente @"models.py#Cliente" {
+    id: long key
+    criado_em: datetime
+    email: email unique max(255)
+    nome: string max(120)
+    pedidos: Pedido[]
+  }
+
+  entity Pedido @"models.py#Pedido" {
+    id: long key
+    criado_em: datetime
+    cliente: Cliente
+    total: decimal precision(12, 2)
+    status: StatusPedido
+    observacao: text?
+  }
+
+  controller ClienteViewSet @"views.py#ClienteViewSet" {
+    op list() -> Cliente[]
+    op create() -> Cliente
+    op retrieve() -> Cliente
+    op update() -> Cliente
+    op partial_update() -> Cliente
+    op destroy()
+    op desativar()
+  }
+
+  controller Relatorios {
+    op resumo() @"views.py#resumo"
+  }
+
+  component Sinais {
+    op enviar_boas_vindas() @"signals.py#enviar_boas_vindas"
+  }
+
+  component Tarefas {
+    op reenviar_pendentes() @"tasks.py#reenviar_pendentes"
+  }
+
+  api Rest http base "/api/v1" {
+    endpoint GET "/clientes" => ClienteViewSet.list
+    endpoint POST "/clientes" => ClienteViewSet.create
+    endpoint GET "/clientes/:pk" => ClienteViewSet.retrieve
+    endpoint PUT "/clientes/:pk" => ClienteViewSet.update
+    endpoint PATCH "/clientes/:pk" => ClienteViewSet.partial_update
+    endpoint DELETE "/clientes/:pk" => ClienteViewSet.destroy
+    endpoint POST "/clientes/:pk/desativar" => ClienteViewSet.desativar
+    endpoint GET "/resumo" => Relatorios.resumo
+  }
+
+  event ClienteSalvo
+
+  on ClienteSalvo => Sinais.enviar_boas_vindas
+
+  job ReenviarPendentes cron "0 3 * * *" => Tarefas.reenviar_pendentes
+}

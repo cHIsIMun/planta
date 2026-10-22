@@ -1,0 +1,74 @@
+{
+  "name": "planta",
+  "version": "0.1.0",
+  "description": "Linguagem de especificação arquitetural ancorada em código",
+  "keywords": [
+    "architecture",
+    "dsl",
+    "c4",
+    "diagrams",
+    "lsp",
+    "mcp",
+    "arquitetura"
+  ],
+  "author": "Lucas Vinicius (https://github.com/cHIsIMun)",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cHIsIMun/planta.git"
+  },
+  "homepage": "https://github.com/cHIsIMun/planta#readme",
+  "bugs": {
+    "url": "https://github.com/cHIsIMun/planta/issues"
+  },
+  "type": "module",
+  "bin": {
+    "planta": "./bin/planta.js"
+  },
+  "exports": {
+    "./sdk": {
+      "types": "./dist/sdk.d.ts",
+      "default": "./dist/sdk.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "grammar",
+    "planta-especificacao.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "generate": "antlr-ng -Dlanguage=TypeScript -o src/generated --generate-visitor true grammar/Planta.g4",
+    "test": "tsx --test --test-timeout=60000 test/*.test.ts",
+    "typecheck": "tsc -p .",
+    "planta": "tsx src/cli.ts",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepack": "pnpm run build"
+  },
+  "dependencies": {
+    "@tree-sitter-grammars/tree-sitter-hcl": "1.2.0",
+    "antlr4ng": "^3.0.16",
+    "tree-sitter-java": "0.23.5",
+    "tree-sitter-python": "0.25.0",
+    "tree-sitter-typescript": "0.23.2",
+    "vscode-languageserver": "10.1.2",
+    "vscode-languageserver-textdocument": "1.0.15",
+    "web-tree-sitter": "0.27.0",
+    "yaml": "2.8.1"
+  },
+  "devDependencies": {
+    "@seriousme/openapi-schema-validator": "2.11.0",
+    "@terrastruct/d2": "0.1.33",
+    "@types/jsdom": "^30.0.0",
+    "@types/node": "^26.6.5",
+    "antlr-ng": "^1.0.10",
+    "jsdom": "29.1.1",
+    "mermaid": "11.17.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

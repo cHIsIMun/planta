@@ -1,0 +1,11 @@
+version: 1
+system: Loja
+projectRoot: ..
+
+extractors:
+  - use: fastapi
+    root: backend
+
+coverage:
+  require:
+    - http.endpoint

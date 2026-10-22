@@ -1,0 +1,103 @@
+{
+  "name": "planta-vscode",
+  "displayName": "Planta",
+  "description": "Linguagem de especificação arquitetural ancorada em código: diagnósticos, completar de âncoras, navegação e CodeLens no código.",
+  "version": "0.1.0",
+  "publisher": "planta",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cHIsIMun/planta.git",
+    "directory": "editors/vscode"
+  },
+  "engines": {
+    "vscode": "^1.91.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:**/planta.config.yaml",
+    "workspaceContains:**/*.planta"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "planta",
+        "aliases": [
+          "Planta"
+        ],
+        "extensions": [
+          ".planta"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "planta",
+        "scopeName": "source.planta",
+        "path": "./syntaxes/planta.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "planta.previewView",
+        "title": "Pré-visualizar view",
+        "category": "Planta"
+      },
+      {
+        "command": "planta.restartServer",
+        "title": "Reiniciar o servidor de linguagem",
+        "category": "Planta"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "planta.previewView",
+          "when": "editorLangId == planta",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Planta",
+      "properties": {
+        "planta.server.command": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "markdownDescription": "Comando que inicia o servidor, sem `lsp --stdio` (acrescentado pela extensão). Vazio: `node_modules/.bin/planta` do workspace, senão `npx planta`."
+        },
+        "planta.dir": {
+          "type": "string",
+          "default": "planta",
+          "description": "Pasta com os arquivos .planta, relativa ao workspace."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --platform=node --format=cjs --external:vscode --outfile=out/extension.js --minify",
+    "typecheck": "tsc -p .",
+    "package": "vsce package --no-dependencies",
+    "build:test": "esbuild test/suite.ts test/e2e.ts --bundle --platform=node --format=cjs --external:vscode --external:@vscode/test-electron --outdir=out/test",
+    "test:e2e": "pnpm run build && pnpm run build:test && node out/test/e2e.js"
+  },
+  "dependencies": {
+    "vscode-languageclient": "10.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "1.91.0",
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "4.0.0",
+    "esbuild": "0.28.2",
+    "typescript": "^7.0.2"
+  }
+}

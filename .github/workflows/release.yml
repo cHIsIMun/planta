@@ -1,0 +1,49 @@
+# Publica uma versão ao receber uma tag `vX.Y.Z` (veja "Lançar uma versão" no README):
+# testa, empacota a CLI e a extensão do VS Code e cria o release no GitHub com
+# os dois arquivos. Com o segredo NPM_TOKEN configurado, publica também no npm.
+name: release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm, registry-url: "https://registry.npmjs.org" }
+
+      - name: A tag confere com o package.json
+        run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run typecheck
+      - run: pnpm test
+
+      - name: Empacotar a CLI
+        run: npm pack
+
+      - name: Empacotar a extensão do VS Code
+        working-directory: editors/vscode
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run build
+          pnpm run package
+
+      - name: Criar o release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" planta-*.tgz editors/vscode/planta-vscode-*.vsix --generate-notes
+
+      - name: Publicar no npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        if: env.NODE_AUTH_TOKEN != ''
+        run: npm publish --provenance --access public

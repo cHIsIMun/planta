@@ -1,0 +1,38 @@
+context Catalogo root "/site/src/app/api" {
+
+  component RotasProdutos {
+    op listar() @"produtos/route.ts#GET"
+    op criar() @"produtos/route.ts#POST"
+    op buscar() @"produtos/[slug]/route.ts#GET"
+  }
+
+  component Saude {
+    op verificar() @"/site/src/pages/api/saude.ts#handler"
+  }
+
+  api Rest http base "/api" {
+    endpoint GET "/produtos" => RotasProdutos.listar
+    endpoint POST "/produtos" => RotasProdutos.criar
+    endpoint GET "/produtos/:slug" => RotasProdutos.buscar
+    endpoint GET "/saude" => Saude.verificar
+  }
+}
+
+app Site kind ssr framework nextjs root "/site/src" {
+
+  route "/" => Home
+  route "/produtos/:slug" => DetalheProduto
+  route "/conta/*" => Conta
+  route "/sobre" => Sobre
+
+  page Home @"app/(loja)/page.tsx#Home" {
+    renders Vitrine
+  }
+  page DetalheProduto @"app/(loja)/produtos/[slug]/page.tsx#DetalheProduto" {
+    calls Catalogo.Rest.buscar
+  }
+  page Conta @"app/conta/[...secao]/page.tsx#Conta"
+  page Sobre @"pages/sobre.tsx#Sobre"
+
+  component Vitrine @"components/Vitrine.tsx#Vitrine"
+}

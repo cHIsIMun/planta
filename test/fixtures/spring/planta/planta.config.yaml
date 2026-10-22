@@ -1,0 +1,17 @@
+version: 1
+system: Loja
+projectRoot: ..
+
+extractors:
+  - use: spring
+    root: backend/src/main/java
+    prefix: /api
+
+coverage:
+  require:
+    - entity
+    - http.endpoint
+    - event.handler
+    - job
+  warn:
+    - service

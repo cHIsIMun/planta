@@ -1,0 +1,10 @@
+system Loja {
+  description "Loja de exemplo para os testes da fase 1"
+}
+
+layer apresentacao match "**/*.controller.ts", "**/*.listener.ts"
+layer aplicacao    match "**/*.service.ts"
+layer dominio      match "**/*.entity.ts"
+layer infra        match "**/*.repository.ts"
+
+actor Visitante "Pessoa navegando sem login"

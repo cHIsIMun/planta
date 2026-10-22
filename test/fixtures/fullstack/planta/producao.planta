@@ -1,0 +1,41 @@
+deployment producao provider aws region "sa-east-1" source terraform "/infra/terraform/envs/prod" {
+
+  usuarios: actor.internet
+
+  cdn: aws.cloudfront @"tf:aws_cloudfront_distribution.web"
+  site: aws.s3 runs Web @"tf:aws_s3_bucket.web"
+
+  network vpc: aws.vpc @"tf:module.vpc" {
+
+    zone publica {
+      lb: aws.alb @"tf:aws_lb.api"
+    }
+
+    zone privada {
+      cluster ecs: aws.ecs.cluster @"tf:aws_ecs_cluster.main" {
+        api: aws.ecs.service runs Api replicas 3 @"tf:aws_ecs_service.api" {
+          cpu = 1024
+          memory = 2048
+        }
+        worker: aws.ecs.service runs Worker replicas 2 @"tf:aws_ecs_service.worker"
+      }
+
+      db: aws.rds.postgres stores Vendas, Catalogo @"tf:aws_db_instance.main" {
+        instance = "db.r6g.large"
+        multiAz = true
+      }
+    }
+  }
+
+  filaEventos: aws.sqs carries Vendas.eventos @"tf:aws_sqs_queue.eventos"
+  email: aws.ses
+
+  usuarios -> cdn -> site
+  usuarios -> lb "HTTPS 443"
+  lb -> api "HTTP 3000"
+  api -> db "TCP 5432"
+  worker -> db "TCP 5432"
+  api -> filaEventos
+  filaEventos -> worker
+  worker -> email
+}

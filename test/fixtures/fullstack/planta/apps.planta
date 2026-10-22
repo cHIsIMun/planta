@@ -1,0 +1,52 @@
+app Api kind backend framework nestjs root "/apps/api/src" {
+  contains Vendas, Catalogo
+}
+
+app Worker kind worker framework nestjs root "/apps/api/src" {
+  contains Vendas.EmailListener
+}
+
+app Web kind spa framework react root "/apps/web/src" {
+
+  route "/" => Home
+  route "/produtos/:slug" => DetalheProduto
+  route "/cadastro" => Cadastro
+  route "/checkout" => Checkout guard Autenticado
+
+  page Home @"pages/Home.tsx#Home" {
+    renders VitrineProdutos
+    calls Catalogo.RestCatalogo.destaques
+  }
+
+  page DetalheProduto @"pages/DetalheProduto.tsx#DetalheProduto" {
+    calls Catalogo.RestCatalogo.buscarPorSlug
+    uses carrinho
+  }
+
+  page Cadastro @"pages/Cadastro.tsx#Cadastro" {
+    renders FormCliente
+    justifiedBy "REQ-001"
+  }
+
+  page Checkout @"pages/Checkout.tsx#Checkout" {
+    renders FormEndereco, FormPagamento
+    calls Vendas.RestPublica.finalizarCompra
+    uses sessao, carrinho
+  }
+
+  component VitrineProdutos @"components/VitrineProdutos.tsx#VitrineProdutos"
+  component FormCliente @"components/FormCliente.tsx#FormCliente" {
+    calls Vendas.RestPublica.criar
+  }
+  component FormEndereco @"components/checkout/FormEndereco.tsx#FormEndereco"
+  component FormPagamento @"components/checkout/FormPagamento.tsx#FormPagamento" {
+    uses Stripe
+  }
+
+  store sessao @"stores/sessao.ts#useSessao"
+  store carrinho @"stores/carrinho.ts#useCarrinho"
+
+  guard Autenticado @"routes/guards.tsx#RequireAuth" {
+    uses sessao
+  }
+}

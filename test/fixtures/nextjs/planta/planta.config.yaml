@@ -1,0 +1,14 @@
+version: 1
+system: Loja
+projectRoot: ..
+
+extractors:
+  - use: nextjs
+    root: site/src
+  - use: react
+    root: site/src
+
+coverage:
+  require:
+    - http.endpoint
+    - ui.route

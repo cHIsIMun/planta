@@ -1,0 +1,25 @@
+/// Produtos à venda.
+context Catalogo root "/apps/api/src/catalogo" {
+
+  entity Produto @"produto.entity.ts#Produto" {
+    id: uuid key
+    slug: string unique
+    nome: string
+    preco: decimal precision(12, 2)
+  }
+
+  controller ProdutosController @"produtos.controller.ts#ProdutosController" {
+    op destaques() -> Produto[]
+    op buscarPorSlug(slug: string) -> Produto?
+  }
+
+  api RestCatalogo http base "/api/v1" {
+    endpoint GET "/produtos/destaques" => ProdutosController.destaques {
+      returns 200 Produto[]
+    }
+    endpoint GET "/produtos/:slug" => ProdutosController.buscarPorSlug {
+      param slug: string in path
+      returns 200 Produto
+    }
+  }
+}

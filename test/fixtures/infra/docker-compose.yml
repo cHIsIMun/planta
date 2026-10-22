@@ -1,0 +1,7 @@
+services:
+  api:
+    image: loja/api:dev
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:16

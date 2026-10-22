@@ -1,0 +1,4337 @@
+{
+  "schema": "planta.model/1",
+  "system": {
+    "id": "Loja",
+    "description": "Plataforma de comércio eletrônico da ACME",
+    "owner": "arquitetura@acme.com",
+    "version": "2.3"
+  },
+  "elements": {
+    "Api": {
+      "kind": "app",
+      "name": "Api",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 3,
+        "column": 1
+      },
+      "appKind": "backend",
+      "framework": "nestjs",
+      "root": "apps/api/src",
+      "routes": [],
+      "relations": [
+        {
+          "type": "contains",
+          "target": "Vendas"
+        },
+        {
+          "type": "contains",
+          "target": "Catalogo"
+        }
+      ]
+    },
+    "Backoffice": {
+      "kind": "actor",
+      "name": "Backoffice",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 16,
+        "column": 1
+      },
+      "description": "Funcionário da ACME",
+      "relations": []
+    },
+    "BancoDeDados": {
+      "kind": "view",
+      "name": "BancoDeDados",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/views.planta",
+        "line": 17,
+        "column": 1
+      },
+      "viewKind": "er",
+      "include": [
+        {
+          "every": "entity"
+        }
+      ],
+      "exclude": [],
+      "relations": []
+    },
+    "CamadasLimpas": {
+      "kind": "rule",
+      "name": "CamadasLimpas",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/regras.planta",
+        "line": 3,
+        "column": 1
+      },
+      "severity": "error",
+      "statements": [
+        {
+          "subject": {
+            "elementKind": "layer",
+            "element": "apresentacao"
+          },
+          "modality": "may",
+          "predicate": {
+            "dependOn": {
+              "elementKind": "layer",
+              "element": "aplicacao"
+            }
+          }
+        },
+        {
+          "subject": {
+            "elementKind": "layer",
+            "element": "aplicacao"
+          },
+          "modality": "may",
+          "predicate": {
+            "dependOn": {
+              "elementKind": "layer",
+              "element": "dominio"
+            }
+          }
+        },
+        {
+          "subject": {
+            "elementKind": "layer",
+            "element": "aplicacao"
+          },
+          "modality": "may",
+          "predicate": {
+            "dependOn": {
+              "elementKind": "layer",
+              "element": "infra"
+            }
+          }
+        },
+        {
+          "subject": {
+            "elementKind": "layer",
+            "element": "dominio"
+          },
+          "modality": "mustNot",
+          "predicate": {
+            "dependOn": {
+              "elementKind": "layer",
+              "element": "infra"
+            }
+          }
+        },
+        {
+          "subject": {
+            "elementKind": "layer",
+            "element": "dominio"
+          },
+          "modality": "mustNot",
+          "predicate": {
+            "dependOn": {
+              "elementKind": "layer",
+              "element": "apresentacao"
+            }
+          }
+        }
+      ],
+      "relations": []
+    },
+    "Catalogo": {
+      "kind": "context",
+      "name": "Catalogo",
+      "docs": "Produtos, categorias e vitrine.",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 5,
+        "column": 1
+      },
+      "root": "apps/api/src/catalogo",
+      "relations": []
+    },
+    "Catalogo.Categoria": {
+      "kind": "entity",
+      "name": "Categoria",
+      "parent": "Catalogo",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 7,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "categorias/categoria.entity.ts#Categoria",
+        "scheme": "code",
+        "path": "apps/api/src/catalogo/categorias/categoria.entity.ts",
+        "symbol": "Categoria",
+        "inferred": false
+      },
+      "fields": [
+        {
+          "id": "Catalogo.Categoria.id",
+          "name": "id",
+          "type": {
+            "ref": "uuid"
+          },
+          "modifiers": {
+            "key": []
+          }
+        },
+        {
+          "id": "Catalogo.Categoria.nome",
+          "name": "nome",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {
+            "max": [
+              80
+            ]
+          }
+        },
+        {
+          "id": "Catalogo.Categoria.slug",
+          "name": "slug",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {
+            "unique": []
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "dominio"
+        }
+      ]
+    },
+    "Catalogo.Produto": {
+      "kind": "entity",
+      "name": "Produto",
+      "parent": "Catalogo",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 13,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "produtos/produto.entity.ts#Produto",
+        "scheme": "code",
+        "path": "apps/api/src/catalogo/produtos/produto.entity.ts",
+        "symbol": "Produto",
+        "inferred": false
+      },
+      "fields": [
+        {
+          "id": "Catalogo.Produto.id",
+          "name": "id",
+          "type": {
+            "ref": "uuid"
+          },
+          "modifiers": {
+            "key": []
+          }
+        },
+        {
+          "id": "Catalogo.Produto.slug",
+          "name": "slug",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {
+            "unique": [],
+            "index": []
+          }
+        },
+        {
+          "id": "Catalogo.Produto.nome",
+          "name": "nome",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {
+            "max": [
+              200
+            ]
+          }
+        },
+        {
+          "id": "Catalogo.Produto.descricao",
+          "name": "descricao",
+          "type": {
+            "ref": "text",
+            "optional": true
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Catalogo.Produto.preco",
+          "name": "preco",
+          "type": {
+            "ref": "decimal"
+          },
+          "modifiers": {
+            "precision": [
+              12,
+              2
+            ]
+          }
+        },
+        {
+          "id": "Catalogo.Produto.categoria",
+          "name": "categoria",
+          "type": {
+            "ref": "Catalogo.Categoria"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Catalogo.Produto.ativo",
+          "name": "ativo",
+          "type": {
+            "ref": "bool"
+          },
+          "modifiers": {
+            "default": [
+              true
+            ]
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "dominio"
+        }
+      ]
+    },
+    "Catalogo.ProdutoRepository": {
+      "kind": "repository",
+      "name": "ProdutoRepository",
+      "parent": "Catalogo",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 37,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "produtos/produto.repository.ts#ProdutoRepository",
+        "scheme": "code",
+        "path": "apps/api/src/catalogo/produtos/produto.repository.ts",
+        "symbol": "ProdutoRepository",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "infra"
+        }
+      ]
+    },
+    "Catalogo.ProdutoResumoDto": {
+      "kind": "dto",
+      "name": "ProdutoResumoDto",
+      "parent": "Catalogo",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 23,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "produtos/dto/produto-resumo.dto.ts#ProdutoResumoDto",
+        "scheme": "code",
+        "path": "apps/api/src/catalogo/produtos/dto/produto-resumo.dto.ts",
+        "symbol": "ProdutoResumoDto",
+        "inferred": false
+      },
+      "relations": []
+    },
+    "Catalogo.ProdutosController": {
+      "kind": "controller",
+      "name": "ProdutosController",
+      "parent": "Catalogo",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 25,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "produtos/produtos.controller.ts#ProdutosController",
+        "scheme": "code",
+        "path": "apps/api/src/catalogo/produtos/produtos.controller.ts",
+        "symbol": "ProdutosController",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        },
+        {
+          "type": "uses",
+          "target": "Catalogo.ProdutosService"
+        }
+      ]
+    },
+    "Catalogo.ProdutosController.buscarPorSlug": {
+      "kind": "op",
+      "name": "buscarPorSlug",
+      "parent": "Catalogo.ProdutosController",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 27,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/catalogo/produtos/produtos.controller.ts#ProdutosController.buscarPorSlug",
+        "scheme": "code",
+        "path": "apps/api/src/catalogo/produtos/produtos.controller.ts",
+        "symbol": "ProdutosController.buscarPorSlug",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "slug",
+          "type": {
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Catalogo.Produto"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        }
+      ]
+    },
+    "Catalogo.ProdutosController.destaques": {
+      "kind": "op",
+      "name": "destaques",
+      "parent": "Catalogo.ProdutosController",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 26,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/catalogo/produtos/produtos.controller.ts#ProdutosController.destaques",
+        "scheme": "code",
+        "path": "apps/api/src/catalogo/produtos/produtos.controller.ts",
+        "symbol": "ProdutosController.destaques",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [],
+      "returns": {
+        "ref": "Catalogo.ProdutoResumoDto",
+        "list": true
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        }
+      ]
+    },
+    "Catalogo.ProdutosService": {
+      "kind": "service",
+      "name": "ProdutosService",
+      "parent": "Catalogo",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 31,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "produtos/produtos.service.ts#ProdutosService",
+        "scheme": "code",
+        "path": "apps/api/src/catalogo/produtos/produtos.service.ts",
+        "symbol": "ProdutosService",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "uses",
+          "target": "Catalogo.ProdutoRepository"
+        }
+      ]
+    },
+    "Catalogo.ProdutosService.buscarPorSlug": {
+      "kind": "op",
+      "name": "buscarPorSlug",
+      "parent": "Catalogo.ProdutosService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 33,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/catalogo/produtos/produtos.service.ts#ProdutosService.buscarPorSlug",
+        "scheme": "code",
+        "path": "apps/api/src/catalogo/produtos/produtos.service.ts",
+        "symbol": "ProdutosService.buscarPorSlug",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "slug",
+          "type": {
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Catalogo.Produto",
+        "optional": true
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-031"
+        }
+      ]
+    },
+    "Catalogo.ProdutosService.destaques": {
+      "kind": "op",
+      "name": "destaques",
+      "parent": "Catalogo.ProdutosService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 32,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/catalogo/produtos/produtos.service.ts#ProdutosService.destaques",
+        "scheme": "code",
+        "path": "apps/api/src/catalogo/produtos/produtos.service.ts",
+        "symbol": "ProdutosService.destaques",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [],
+      "returns": {
+        "ref": "Catalogo.ProdutoResumoDto",
+        "list": true
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-030"
+        }
+      ]
+    },
+    "Catalogo.RestCatalogo": {
+      "kind": "api",
+      "name": "RestCatalogo",
+      "parent": "Catalogo",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 39,
+        "column": 3
+      },
+      "protocol": "http",
+      "base": "/api/v1",
+      "relations": []
+    },
+    "Catalogo.RestCatalogo.buscarPorSlug": {
+      "kind": "endpoint",
+      "name": "buscarPorSlug",
+      "parent": "Catalogo.RestCatalogo",
+      "meta": {
+        "status": "active",
+        "tags": [
+          "publico"
+        ],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 46,
+        "column": 5
+      },
+      "protocol": "http",
+      "method": "GET",
+      "path": "/api/v1/produtos/:slug",
+      "params": [
+        {
+          "name": "slug",
+          "type": {
+            "ref": "string"
+          },
+          "in": "path"
+        }
+      ],
+      "responses": [
+        {
+          "status": 200,
+          "type": {
+            "ref": "Catalogo.Produto"
+          }
+        },
+        {
+          "status": 404
+        }
+      ],
+      "relations": [
+        {
+          "type": "handledBy",
+          "target": "Catalogo.ProdutosController.buscarPorSlug"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-031"
+        }
+      ]
+    },
+    "Catalogo.RestCatalogo.destaques": {
+      "kind": "endpoint",
+      "name": "destaques",
+      "parent": "Catalogo.RestCatalogo",
+      "meta": {
+        "status": "active",
+        "tags": [
+          "publico"
+        ],
+        "owner": "time-catalogo"
+      },
+      "source": {
+        "file": "planta/contextos/catalogo.planta",
+        "line": 41,
+        "column": 5
+      },
+      "protocol": "http",
+      "method": "GET",
+      "path": "/api/v1/produtos/destaques",
+      "params": [],
+      "responses": [
+        {
+          "status": 200,
+          "type": {
+            "ref": "Catalogo.ProdutoResumoDto",
+            "list": true
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "handledBy",
+          "target": "Catalogo.ProdutosController.destaques"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-030"
+        }
+      ]
+    },
+    "Cliente": {
+      "kind": "actor",
+      "name": "Cliente",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 15,
+        "column": 1
+      },
+      "description": "Pessoa autenticada que compra",
+      "relations": []
+    },
+    "Containers": {
+      "kind": "view",
+      "name": "Containers",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/views.planta",
+        "line": 8,
+        "column": 1
+      },
+      "viewKind": "c4.container",
+      "include": [
+        {
+          "every": "app"
+        },
+        {
+          "every": "external"
+        },
+        {
+          "every": "actor"
+        }
+      ],
+      "exclude": [],
+      "relations": []
+    },
+    "ContextosIsolados": {
+      "kind": "rule",
+      "name": "ContextosIsolados",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/regras.planta",
+        "line": 11,
+        "column": 1
+      },
+      "severity": "error",
+      "statements": [
+        {
+          "subject": {
+            "elementKind": "context",
+            "element": "Catalogo"
+          },
+          "modality": "mustNot",
+          "predicate": {
+            "dependOn": {
+              "elementKind": "context",
+              "element": "Vendas"
+            }
+          }
+        }
+      ],
+      "relations": []
+    },
+    "Convencoes": {
+      "kind": "rule",
+      "name": "Convencoes",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/regras.planta",
+        "line": 26,
+        "column": 1
+      },
+      "severity": "warning",
+      "statements": [
+        {
+          "subject": {
+            "every": "service"
+          },
+          "modality": "must",
+          "predicate": {
+            "match": ".*Service$"
+          }
+        },
+        {
+          "subject": {
+            "every": "repository"
+          },
+          "modality": "must",
+          "predicate": {
+            "inLayer": "infra"
+          }
+        },
+        {
+          "subject": {
+            "every": "controller"
+          },
+          "modality": "mustNot",
+          "predicate": {
+            "dependOn": {
+              "every": "repository"
+            }
+          }
+        }
+      ],
+      "relations": []
+    },
+    "FluxoCadastro": {
+      "kind": "view",
+      "name": "FluxoCadastro",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/views.planta",
+        "line": 21,
+        "column": 1
+      },
+      "viewKind": "sequence",
+      "of": "Vendas.CadastrarCliente",
+      "include": [],
+      "exclude": [],
+      "relations": []
+    },
+    "FluxoCompra": {
+      "kind": "view",
+      "name": "FluxoCompra",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/views.planta",
+        "line": 22,
+        "column": 1
+      },
+      "viewKind": "sequence",
+      "of": "Vendas.FinalizarCompra",
+      "include": [],
+      "exclude": [],
+      "relations": []
+    },
+    "FrontendSoPelaApi": {
+      "kind": "rule",
+      "name": "FrontendSoPelaApi",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/regras.planta",
+        "line": 15,
+        "column": 1
+      },
+      "severity": "error",
+      "statements": [
+        {
+          "subject": {
+            "elementKind": "app",
+            "element": "Web"
+          },
+          "modality": "mustNot",
+          "predicate": {
+            "dependOn": {
+              "elementKind": "context",
+              "element": "Vendas"
+            }
+          },
+          "exceptVia": "endpoint"
+        },
+        {
+          "subject": {
+            "elementKind": "app",
+            "element": "Web"
+          },
+          "modality": "mustNot",
+          "predicate": {
+            "dependOn": {
+              "elementKind": "context",
+              "element": "Catalogo"
+            }
+          },
+          "exceptVia": "endpoint"
+        }
+      ],
+      "relations": []
+    },
+    "InfraProducao": {
+      "kind": "view",
+      "name": "InfraProducao",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/views.planta",
+        "line": 23,
+        "column": 1
+      },
+      "viewKind": "deployment",
+      "of": "producao",
+      "style": "aws",
+      "include": [],
+      "exclude": [],
+      "relations": []
+    },
+    "MapaDoSite": {
+      "kind": "view",
+      "name": "MapaDoSite",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/views.planta",
+        "line": 24,
+        "column": 1
+      },
+      "viewKind": "sitemap",
+      "of": "Web",
+      "include": [],
+      "exclude": [],
+      "relations": []
+    },
+    "ModeloVendas": {
+      "kind": "view",
+      "name": "ModeloVendas",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/views.planta",
+        "line": 12,
+        "column": 1
+      },
+      "viewKind": "class",
+      "include": [
+        {
+          "element": "Vendas",
+          "children": true
+        }
+      ],
+      "exclude": [
+        {
+          "every": "dto"
+        }
+      ],
+      "relations": []
+    },
+    "Panorama": {
+      "kind": "view",
+      "name": "Panorama",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/views.planta",
+        "line": 3,
+        "column": 1
+      },
+      "viewKind": "c4.context",
+      "title": "Loja — visão de contexto",
+      "include": [
+        "*"
+      ],
+      "exclude": [],
+      "relations": []
+    },
+    "Rastreabilidade": {
+      "kind": "rule",
+      "name": "Rastreabilidade",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/regras.planta",
+        "line": 20,
+        "column": 1
+      },
+      "severity": "warning",
+      "statements": [
+        {
+          "subject": {
+            "every": "endpoint",
+            "where": {
+              "attribute": "tag",
+              "value": "publico"
+            }
+          },
+          "modality": "must",
+          "predicate": {
+            "have": "justifiedBy"
+          }
+        },
+        {
+          "subject": {
+            "every": "process"
+          },
+          "modality": "must",
+          "predicate": {
+            "have": "justifiedBy"
+          }
+        },
+        {
+          "subject": {
+            "every": "entity",
+            "where": {
+              "attribute": "tag",
+              "value": "pii"
+            }
+          },
+          "modality": "must",
+          "predicate": {
+            "have": "owner"
+          }
+        }
+      ],
+      "relations": []
+    },
+    "Requisitos": {
+      "kind": "view",
+      "name": "Requisitos",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/views.planta",
+        "line": 26,
+        "column": 1
+      },
+      "viewKind": "traceability",
+      "include": [
+        {
+          "every": "requirement"
+        },
+        {
+          "every": "process"
+        },
+        {
+          "every": "endpoint"
+        },
+        {
+          "every": "page"
+        }
+      ],
+      "exclude": [],
+      "relations": []
+    },
+    "SES": {
+      "kind": "external",
+      "name": "SES",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 23,
+        "column": 1
+      },
+      "description": "Amazon Simple Email Service",
+      "relations": []
+    },
+    "SES.enviarEmail": {
+      "kind": "op",
+      "name": "enviarEmail",
+      "parent": "SES",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 24,
+        "column": 3
+      },
+      "params": [
+        {
+          "name": "para",
+          "type": {
+            "ref": "email"
+          }
+        },
+        {
+          "name": "assunto",
+          "type": {
+            "ref": "string"
+          }
+        },
+        {
+          "name": "corpo",
+          "type": {
+            "ref": "text"
+          }
+        }
+      ],
+      "relations": []
+    },
+    "Stripe": {
+      "kind": "external",
+      "name": "Stripe",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 18,
+        "column": 1
+      },
+      "description": "Gateway de pagamentos",
+      "relations": []
+    },
+    "Stripe.criarCobranca": {
+      "kind": "op",
+      "name": "criarCobranca",
+      "parent": "Stripe",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 19,
+        "column": 3
+      },
+      "params": [
+        {
+          "name": "valor",
+          "type": {
+            "ref": "decimal"
+          }
+        },
+        {
+          "name": "token",
+          "type": {
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "string"
+      },
+      "relations": []
+    },
+    "Stripe.estornar": {
+      "kind": "op",
+      "name": "estornar",
+      "parent": "Stripe",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 20,
+        "column": 3
+      },
+      "params": [
+        {
+          "name": "cobrancaId",
+          "type": {
+            "ref": "string"
+          }
+        }
+      ],
+      "relations": []
+    },
+    "UsarFilaParaEmails": {
+      "kind": "decision",
+      "name": "UsarFilaParaEmails",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 27,
+        "column": 1
+      },
+      "anchor": {
+        "raw": "md:/docs/adr/0007-filas-para-email.md",
+        "scheme": "md",
+        "path": "docs/adr/0007-filas-para-email.md",
+        "inferred": false
+      },
+      "title": "E-mails transacionais são enviados de forma assíncrona",
+      "relations": []
+    },
+    "Vendas": {
+      "kind": "context",
+      "name": "Vendas",
+      "docs": "Clientes, carrinho, pedidos, estoque e pagamentos.",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 7,
+        "column": 1
+      },
+      "root": "apps/api/src/vendas",
+      "relations": []
+    },
+    "Vendas.AuditoriaService": {
+      "kind": "service",
+      "name": "AuditoriaService",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 109,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "auditoria/auditoria.service.ts#AuditoriaService",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/auditoria/auditoria.service.ts",
+        "symbol": "AuditoriaService",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        }
+      ]
+    },
+    "Vendas.AuditoriaService.registrar": {
+      "kind": "op",
+      "name": "registrar",
+      "parent": "Vendas.AuditoriaService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 110,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/auditoria/auditoria.service.ts#AuditoriaService.registrar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/auditoria/auditoria.service.ts",
+        "symbol": "AuditoriaService.registrar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "acao",
+          "type": {
+            "ref": "string"
+          }
+        },
+        {
+          "name": "dados",
+          "type": {
+            "ref": "json"
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        }
+      ]
+    },
+    "Vendas.CadastrarCliente": {
+      "kind": "process",
+      "name": "CadastrarCliente",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 199,
+        "column": 3
+      },
+      "actors": [
+        "Visitante"
+      ],
+      "verify": "calls",
+      "flow": [
+        {
+          "op": "step",
+          "name": "validar",
+          "target": "Vendas.ClientesService.validarEmail"
+        },
+        {
+          "op": "if",
+          "condition": "e-mail já cadastrado",
+          "then": [
+            {
+              "op": "fail",
+              "status": 409,
+              "message": "Conflito"
+            }
+          ],
+          "else": []
+        },
+        {
+          "op": "step",
+          "name": "persistir",
+          "target": "Vendas.ClienteRepository.salvar"
+        },
+        {
+          "op": "step",
+          "name": "notificar",
+          "emit": "Vendas.ClienteCadastrado"
+        },
+        {
+          "op": "return",
+          "type": {
+            "ref": "Vendas.Cliente"
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-001"
+        },
+        {
+          "type": "triggeredBy",
+          "target": "Vendas.RestPublica.criar"
+        }
+      ]
+    },
+    "Vendas.CarrinhoJobs": {
+      "kind": "component",
+      "name": "CarrinhoJobs",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 133,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "carrinho/carrinho.jobs.ts#CarrinhoJobs",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/carrinho/carrinho.jobs.ts",
+        "symbol": "CarrinhoJobs",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "uses",
+          "target": "Vendas.CarrinhoService"
+        }
+      ]
+    },
+    "Vendas.CarrinhoJobs.expirar": {
+      "kind": "op",
+      "name": "expirar",
+      "parent": "Vendas.CarrinhoJobs",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 134,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/carrinho/carrinho.jobs.ts#CarrinhoJobs.expirar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/carrinho/carrinho.jobs.ts",
+        "symbol": "CarrinhoJobs.expirar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        }
+      ]
+    },
+    "Vendas.CarrinhoService": {
+      "kind": "service",
+      "name": "CarrinhoService",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 92,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "carrinho/carrinho.service.ts#CarrinhoService",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/carrinho/carrinho.service.ts",
+        "symbol": "CarrinhoService",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        }
+      ]
+    },
+    "Vendas.CarrinhoService.expirarAntigos": {
+      "kind": "op",
+      "name": "expirarAntigos",
+      "parent": "Vendas.CarrinhoService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 94,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/carrinho/carrinho.service.ts#CarrinhoService.expirarAntigos",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/carrinho/carrinho.service.ts",
+        "symbol": "CarrinhoService.expirarAntigos",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        }
+      ]
+    },
+    "Vendas.CarrinhoService.validar": {
+      "kind": "op",
+      "name": "validar",
+      "parent": "Vendas.CarrinhoService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 93,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/carrinho/carrinho.service.ts#CarrinhoService.validar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/carrinho/carrinho.service.ts",
+        "symbol": "CarrinhoService.validar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "clienteId",
+          "type": {
+            "ref": "uuid"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "bool"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        }
+      ]
+    },
+    "Vendas.CheckoutController": {
+      "kind": "controller",
+      "name": "CheckoutController",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 80,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "checkout/checkout.controller.ts#CheckoutController",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/checkout/checkout.controller.ts",
+        "symbol": "CheckoutController",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        },
+        {
+          "type": "uses",
+          "target": "Vendas.CarrinhoService"
+        },
+        {
+          "type": "uses",
+          "target": "Vendas.EstoqueService"
+        },
+        {
+          "type": "uses",
+          "target": "Vendas.PedidosService"
+        },
+        {
+          "type": "uses",
+          "target": "Vendas.PagamentoGateway"
+        },
+        {
+          "type": "uses",
+          "target": "Vendas.AuditoriaService"
+        }
+      ]
+    },
+    "Vendas.CheckoutController.finalizar": {
+      "kind": "op",
+      "name": "finalizar",
+      "parent": "Vendas.CheckoutController",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 81,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/checkout/checkout.controller.ts#CheckoutController.finalizar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/checkout/checkout.controller.ts",
+        "symbol": "CheckoutController.finalizar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "dto",
+          "type": {
+            "ref": "Vendas.CheckoutDto"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Vendas.Pedido"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        }
+      ]
+    },
+    "Vendas.CheckoutDto": {
+      "kind": "dto",
+      "name": "CheckoutDto",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 63,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "checkout/dto/checkout.dto.ts#CheckoutDto",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/checkout/dto/checkout.dto.ts",
+        "symbol": "CheckoutDto",
+        "inferred": false
+      },
+      "fields": [
+        {
+          "id": "Vendas.CheckoutDto.endereco",
+          "name": "endereco",
+          "type": {
+            "ref": "Vendas.Endereco"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Vendas.CheckoutDto.tokenPagamento",
+          "name": "tokenPagamento",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {}
+        }
+      ],
+      "relations": []
+    },
+    "Vendas.Cliente": {
+      "kind": "entity",
+      "name": "Cliente",
+      "parent": "Vendas",
+      "docs": "Dados cadastrais do cliente.",
+      "meta": {
+        "status": "active",
+        "tags": [
+          "pii"
+        ],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 15,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "clientes/cliente.entity.ts#Cliente",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/cliente.entity.ts",
+        "symbol": "Cliente",
+        "inferred": false
+      },
+      "fields": [
+        {
+          "id": "Vendas.Cliente.id",
+          "name": "id",
+          "type": {
+            "ref": "uuid"
+          },
+          "modifiers": {
+            "key": []
+          }
+        },
+        {
+          "id": "Vendas.Cliente.email",
+          "name": "email",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {
+            "unique": [],
+            "max": [
+              255
+            ],
+            "sensitive": []
+          },
+          "tags": [
+            "pii"
+          ]
+        },
+        {
+          "id": "Vendas.Cliente.nome",
+          "name": "nome",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {
+            "max": [
+              120
+            ],
+            "sensitive": []
+          },
+          "tags": [
+            "pii"
+          ]
+        },
+        {
+          "id": "Vendas.Cliente.pedidos",
+          "name": "pedidos",
+          "type": {
+            "ref": "Vendas.Pedido",
+            "list": true
+          },
+          "modifiers": {
+            "inverse": [
+              "cliente"
+            ]
+          }
+        },
+        {
+          "id": "Vendas.Cliente.criadoEm",
+          "name": "criadoEm",
+          "type": {
+            "ref": "datetime"
+          },
+          "modifiers": {
+            "default": [
+              "now"
+            ]
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "dominio"
+        }
+      ]
+    },
+    "Vendas.ClienteCadastrado": {
+      "kind": "event",
+      "name": "ClienteCadastrado",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 176,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "clientes/eventos/cliente-cadastrado.event.ts#ClienteCadastrado",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/eventos/cliente-cadastrado.event.ts",
+        "symbol": "ClienteCadastrado",
+        "inferred": false
+      },
+      "channel": "Vendas.eventos",
+      "fields": [
+        {
+          "id": "Vendas.ClienteCadastrado.clienteId",
+          "name": "clienteId",
+          "type": {
+            "ref": "uuid"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Vendas.ClienteCadastrado.email",
+          "name": "email",
+          "type": {
+            "ref": "email"
+          },
+          "modifiers": {}
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "dominio"
+        }
+      ]
+    },
+    "Vendas.ClienteRepository": {
+      "kind": "repository",
+      "name": "ClienteRepository",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 113,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "clientes/cliente.repository.ts#ClienteRepository",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/cliente.repository.ts",
+        "symbol": "ClienteRepository",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "infra"
+        }
+      ]
+    },
+    "Vendas.ClienteRepository.salvar": {
+      "kind": "op",
+      "name": "salvar",
+      "parent": "Vendas.ClienteRepository",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 114,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/clientes/cliente.repository.ts#ClienteRepository.salvar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/cliente.repository.ts",
+        "symbol": "ClienteRepository.salvar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "c",
+          "type": {
+            "ref": "Vendas.Cliente"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Vendas.Cliente"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "infra"
+        }
+      ]
+    },
+    "Vendas.ClientesController": {
+      "kind": "controller",
+      "name": "ClientesController",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 74,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "clientes/clientes.controller.ts#ClientesController",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/clientes.controller.ts",
+        "symbol": "ClientesController",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        },
+        {
+          "type": "uses",
+          "target": "Vendas.ClientesService"
+        }
+      ]
+    },
+    "Vendas.ClientesController.buscar": {
+      "kind": "op",
+      "name": "buscar",
+      "parent": "Vendas.ClientesController",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 76,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/clientes/clientes.controller.ts#ClientesController.buscar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/clientes.controller.ts",
+        "symbol": "ClientesController.buscar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "id",
+          "type": {
+            "ref": "uuid"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Vendas.Cliente"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        }
+      ]
+    },
+    "Vendas.ClientesController.criar": {
+      "kind": "op",
+      "name": "criar",
+      "parent": "Vendas.ClientesController",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 75,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/clientes/clientes.controller.ts#ClientesController.criar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/clientes.controller.ts",
+        "symbol": "ClientesController.criar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "dto",
+          "type": {
+            "ref": "Vendas.CriarClienteDto"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Vendas.Cliente"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        }
+      ]
+    },
+    "Vendas.ClientesService": {
+      "kind": "service",
+      "name": "ClientesService",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 85,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "clientes/clientes.service.ts#ClientesService",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/clientes.service.ts",
+        "symbol": "ClientesService",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "uses",
+          "target": "Vendas.ClienteRepository"
+        }
+      ]
+    },
+    "Vendas.ClientesService.buscar": {
+      "kind": "op",
+      "name": "buscar",
+      "parent": "Vendas.ClientesService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 88,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/clientes/clientes.service.ts#ClientesService.buscar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/clientes.service.ts",
+        "symbol": "ClientesService.buscar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "id",
+          "type": {
+            "ref": "uuid"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Vendas.Cliente",
+        "optional": true
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        }
+      ]
+    },
+    "Vendas.ClientesService.criar": {
+      "kind": "op",
+      "name": "criar",
+      "parent": "Vendas.ClientesService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 86,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/clientes/clientes.service.ts#ClientesService.criar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/clientes.service.ts",
+        "symbol": "ClientesService.criar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "dto",
+          "type": {
+            "ref": "Vendas.CriarClienteDto"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Vendas.Cliente"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-001"
+        }
+      ]
+    },
+    "Vendas.ClientesService.validarEmail": {
+      "kind": "op",
+      "name": "validarEmail",
+      "parent": "Vendas.ClientesService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 87,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/clientes/clientes.service.ts#ClientesService.validarEmail",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/clientes.service.ts",
+        "symbol": "ClientesService.validarEmail",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "email",
+          "type": {
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "bool"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-001"
+        }
+      ]
+    },
+    "Vendas.CriarClienteDto": {
+      "kind": "dto",
+      "name": "CriarClienteDto",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 58,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "clientes/dto/criar-cliente.dto.ts#CriarClienteDto",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/clientes/dto/criar-cliente.dto.ts",
+        "symbol": "CriarClienteDto",
+        "inferred": false
+      },
+      "fields": [
+        {
+          "id": "Vendas.CriarClienteDto.email",
+          "name": "email",
+          "type": {
+            "ref": "email"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Vendas.CriarClienteDto.nome",
+          "name": "nome",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {
+            "max": [
+              120
+            ]
+          }
+        }
+      ],
+      "relations": []
+    },
+    "Vendas.EmailListener": {
+      "kind": "component",
+      "name": "EmailListener",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 127,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "notificacoes/email.listener.ts#EmailListener",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/notificacoes/email.listener.ts",
+        "symbol": "EmailListener",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        },
+        {
+          "type": "uses",
+          "target": "SES"
+        }
+      ]
+    },
+    "Vendas.EmailListener.enviarBoasVindas": {
+      "kind": "op",
+      "name": "enviarBoasVindas",
+      "parent": "Vendas.EmailListener",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 128,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/notificacoes/email.listener.ts#EmailListener.enviarBoasVindas",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/notificacoes/email.listener.ts",
+        "symbol": "EmailListener.enviarBoasVindas",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "evento",
+          "type": {
+            "ref": "Vendas.ClienteCadastrado"
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        },
+        {
+          "type": "decidedBy",
+          "target": "UsarFilaParaEmails"
+        },
+        {
+          "type": "consumes",
+          "target": "Vendas.ClienteCadastrado"
+        }
+      ]
+    },
+    "Vendas.EmailListener.enviarConfirmacao": {
+      "kind": "op",
+      "name": "enviarConfirmacao",
+      "parent": "Vendas.EmailListener",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 129,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/notificacoes/email.listener.ts#EmailListener.enviarConfirmacao",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/notificacoes/email.listener.ts",
+        "symbol": "EmailListener.enviarConfirmacao",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "evento",
+          "type": {
+            "ref": "Vendas.PedidoCriado"
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "apresentacao"
+        },
+        {
+          "type": "decidedBy",
+          "target": "UsarFilaParaEmails"
+        },
+        {
+          "type": "consumes",
+          "target": "Vendas.PedidoCriado"
+        }
+      ]
+    },
+    "Vendas.Endereco": {
+      "kind": "value",
+      "name": "Endereco",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 42,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "/apps/api/src/shared/endereco.ts#Endereco",
+        "scheme": "code",
+        "path": "apps/api/src/shared/endereco.ts",
+        "symbol": "Endereco",
+        "inferred": false
+      },
+      "fields": [
+        {
+          "id": "Vendas.Endereco.logradouro",
+          "name": "logradouro",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Vendas.Endereco.numero",
+          "name": "numero",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Vendas.Endereco.cep",
+          "name": "cep",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {
+            "max": [
+              9
+            ]
+          }
+        },
+        {
+          "id": "Vendas.Endereco.cidade",
+          "name": "cidade",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Vendas.Endereco.uf",
+          "name": "uf",
+          "type": {
+            "ref": "string"
+          },
+          "modifiers": {
+            "max": [
+              2
+            ]
+          }
+        }
+      ],
+      "relations": []
+    },
+    "Vendas.ErroDto": {
+      "kind": "dto",
+      "name": "ErroDto",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 68,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "/apps/api/src/shared/erro.dto.ts#ErroDto",
+        "scheme": "code",
+        "path": "apps/api/src/shared/erro.dto.ts",
+        "symbol": "ErroDto",
+        "inferred": false
+      },
+      "relations": []
+    },
+    "Vendas.EstoqueService": {
+      "kind": "service",
+      "name": "EstoqueService",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 97,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "estoque/estoque.service.ts#EstoqueService",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/estoque/estoque.service.ts",
+        "symbol": "EstoqueService",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        }
+      ]
+    },
+    "Vendas.EstoqueService.liberar": {
+      "kind": "op",
+      "name": "liberar",
+      "parent": "Vendas.EstoqueService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 99,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/estoque/estoque.service.ts#EstoqueService.liberar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/estoque/estoque.service.ts",
+        "symbol": "EstoqueService.liberar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "pedidoId",
+          "type": {
+            "ref": "uuid"
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-011"
+        }
+      ]
+    },
+    "Vendas.EstoqueService.reservar": {
+      "kind": "op",
+      "name": "reservar",
+      "parent": "Vendas.EstoqueService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 98,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/estoque/estoque.service.ts#EstoqueService.reservar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/estoque/estoque.service.ts",
+        "symbol": "EstoqueService.reservar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "pedidoId",
+          "type": {
+            "ref": "uuid"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "bool"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-011"
+        }
+      ]
+    },
+    "Vendas.ExpirarCarrinhos": {
+      "kind": "job",
+      "name": "ExpirarCarrinhos",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 193,
+        "column": 3
+      },
+      "cron": "0 3 * * *",
+      "relations": [
+        {
+          "type": "handledBy",
+          "target": "Vendas.CarrinhoJobs.expirar"
+        }
+      ]
+    },
+    "Vendas.FinalizarCompra": {
+      "kind": "process",
+      "name": "FinalizarCompra",
+      "parent": "Vendas",
+      "docs": "Do carrinho até o pedido pago.",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-checkout"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 216,
+        "column": 3
+      },
+      "actors": [
+        "Cliente"
+      ],
+      "verify": "calls",
+      "flow": [
+        {
+          "op": "step",
+          "name": "validarCarrinho",
+          "target": "Vendas.CarrinhoService.validar"
+        },
+        {
+          "op": "step",
+          "name": "reservarEstoque",
+          "target": "Vendas.EstoqueService.reservar"
+        },
+        {
+          "op": "if",
+          "condition": "estoque insuficiente",
+          "then": [
+            {
+              "op": "fail",
+              "status": 422,
+              "message": "Itens indisponíveis"
+            }
+          ],
+          "else": []
+        },
+        {
+          "op": "step",
+          "name": "criarPedido",
+          "target": "Vendas.PedidosService.criar"
+        },
+        {
+          "op": "step",
+          "name": "cobrar",
+          "target": "Vendas.PagamentoGateway.cobrar"
+        },
+        {
+          "op": "if",
+          "condition": "pagamento recusado",
+          "then": [
+            {
+              "op": "step",
+              "name": "liberarEstoque",
+              "target": "Vendas.EstoqueService.liberar"
+            },
+            {
+              "op": "fail",
+              "status": 402,
+              "message": "Pagamento recusado"
+            }
+          ],
+          "else": [
+            {
+              "op": "parallel",
+              "body": [
+                {
+                  "op": "step",
+                  "name": "publicar",
+                  "emit": "Vendas.PedidoCriado"
+                },
+                {
+                  "op": "step",
+                  "name": "registrarAuditoria",
+                  "target": "Vendas.AuditoriaService.registrar"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "op": "return",
+          "type": {
+            "ref": "Vendas.Pedido"
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-010"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-011"
+        },
+        {
+          "type": "triggeredBy",
+          "target": "Vendas.RestPublica.finalizarCompra"
+        }
+      ]
+    },
+    "Vendas.ItemPedido": {
+      "kind": "entity",
+      "name": "ItemPedido",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 34,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pedidos/item-pedido.entity.ts#ItemPedido",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pedidos/item-pedido.entity.ts",
+        "symbol": "ItemPedido",
+        "inferred": false
+      },
+      "fields": [
+        {
+          "id": "Vendas.ItemPedido.id",
+          "name": "id",
+          "type": {
+            "ref": "uuid"
+          },
+          "modifiers": {
+            "key": []
+          }
+        },
+        {
+          "id": "Vendas.ItemPedido.pedido",
+          "name": "pedido",
+          "type": {
+            "ref": "Vendas.Pedido"
+          },
+          "modifiers": {
+            "inverse": [
+              "itens"
+            ]
+          }
+        },
+        {
+          "id": "Vendas.ItemPedido.produto",
+          "name": "produto",
+          "type": {
+            "ref": "Catalogo.Produto"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Vendas.ItemPedido.quantidade",
+          "name": "quantidade",
+          "type": {
+            "ref": "int"
+          },
+          "modifiers": {
+            "min": [
+              1
+            ]
+          }
+        },
+        {
+          "id": "Vendas.ItemPedido.precoUnitario",
+          "name": "precoUnitario",
+          "type": {
+            "ref": "decimal"
+          },
+          "modifiers": {
+            "precision": [
+              12,
+              2
+            ]
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "dominio"
+        }
+      ]
+    },
+    "Vendas.PagamentoConfirmado": {
+      "kind": "event",
+      "name": "PagamentoConfirmado",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 187,
+        "column": 3
+      },
+      "channel": "Vendas.eventos",
+      "relations": []
+    },
+    "Vendas.PagamentoGateway": {
+      "kind": "gateway",
+      "name": "PagamentoGateway",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 122,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pagamentos/stripe.gateway.ts#StripeGateway",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pagamentos/stripe.gateway.ts",
+        "symbol": "StripeGateway",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "infra"
+        },
+        {
+          "type": "uses",
+          "target": "Stripe"
+        }
+      ]
+    },
+    "Vendas.PagamentoGateway.cobrar": {
+      "kind": "op",
+      "name": "cobrar",
+      "parent": "Vendas.PagamentoGateway",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 123,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/pagamentos/stripe.gateway.ts#StripeGateway.cobrar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pagamentos/stripe.gateway.ts",
+        "symbol": "StripeGateway.cobrar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "valor",
+          "type": {
+            "ref": "decimal"
+          }
+        },
+        {
+          "name": "token",
+          "type": {
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "bool"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "infra"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-010"
+        }
+      ]
+    },
+    "Vendas.Pedido": {
+      "kind": "entity",
+      "name": "Pedido",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 23,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pedidos/pedido.entity.ts#Pedido",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pedidos/pedido.entity.ts",
+        "symbol": "Pedido",
+        "inferred": false
+      },
+      "fields": [
+        {
+          "id": "Vendas.Pedido.id",
+          "name": "id",
+          "type": {
+            "ref": "uuid"
+          },
+          "modifiers": {
+            "key": []
+          }
+        },
+        {
+          "id": "Vendas.Pedido.numero",
+          "name": "numero",
+          "type": {
+            "ref": "long"
+          },
+          "modifiers": {
+            "unique": []
+          }
+        },
+        {
+          "id": "Vendas.Pedido.cliente",
+          "name": "cliente",
+          "type": {
+            "ref": "Vendas.Cliente"
+          },
+          "modifiers": {
+            "inverse": [
+              "pedidos"
+            ]
+          }
+        },
+        {
+          "id": "Vendas.Pedido.itens",
+          "name": "itens",
+          "type": {
+            "ref": "Vendas.ItemPedido",
+            "list": true
+          },
+          "modifiers": {
+            "inverse": [
+              "pedido"
+            ],
+            "cascade": []
+          }
+        },
+        {
+          "id": "Vendas.Pedido.status",
+          "name": "status",
+          "type": {
+            "ref": "Vendas.StatusPedido"
+          },
+          "modifiers": {
+            "default": [
+              "PENDENTE"
+            ]
+          }
+        },
+        {
+          "id": "Vendas.Pedido.total",
+          "name": "total",
+          "type": {
+            "ref": "decimal"
+          },
+          "modifiers": {
+            "precision": [
+              12,
+              2
+            ]
+          }
+        },
+        {
+          "id": "Vendas.Pedido.endereco",
+          "name": "endereco",
+          "type": {
+            "ref": "Vendas.Endereco"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Vendas.Pedido.criadoEm",
+          "name": "criadoEm",
+          "type": {
+            "ref": "datetime"
+          },
+          "modifiers": {
+            "default": [
+              "now"
+            ]
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "dominio"
+        }
+      ]
+    },
+    "Vendas.PedidoAgg": {
+      "kind": "aggregate",
+      "name": "PedidoAgg",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 54,
+        "column": 3
+      },
+      "root": "Vendas.Pedido",
+      "contains": [
+        "Vendas.ItemPedido",
+        "Vendas.Endereco"
+      ],
+      "relations": []
+    },
+    "Vendas.PedidoCriado": {
+      "kind": "event",
+      "name": "PedidoCriado",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 181,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pedidos/eventos/pedido-criado.event.ts#PedidoCriado",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pedidos/eventos/pedido-criado.event.ts",
+        "symbol": "PedidoCriado",
+        "inferred": false
+      },
+      "channel": "Vendas.eventos",
+      "fields": [
+        {
+          "id": "Vendas.PedidoCriado.pedidoId",
+          "name": "pedidoId",
+          "type": {
+            "ref": "uuid"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Vendas.PedidoCriado.clienteId",
+          "name": "clienteId",
+          "type": {
+            "ref": "uuid"
+          },
+          "modifiers": {}
+        },
+        {
+          "id": "Vendas.PedidoCriado.total",
+          "name": "total",
+          "type": {
+            "ref": "decimal"
+          },
+          "modifiers": {}
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "dominio"
+        }
+      ]
+    },
+    "Vendas.PedidoRepository": {
+      "kind": "repository",
+      "name": "PedidoRepository",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 117,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pedidos/pedido.repository.ts#PedidoRepository",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pedidos/pedido.repository.ts",
+        "symbol": "PedidoRepository",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "infra"
+        }
+      ]
+    },
+    "Vendas.PedidoRepository.buscarPorId": {
+      "kind": "op",
+      "name": "buscarPorId",
+      "parent": "Vendas.PedidoRepository",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 119,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/pedidos/pedido.repository.ts#PedidoRepository.buscarPorId",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pedidos/pedido.repository.ts",
+        "symbol": "PedidoRepository.buscarPorId",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "id",
+          "type": {
+            "ref": "uuid"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Vendas.Pedido",
+        "optional": true
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "infra"
+        }
+      ]
+    },
+    "Vendas.PedidoRepository.salvar": {
+      "kind": "op",
+      "name": "salvar",
+      "parent": "Vendas.PedidoRepository",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 118,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/pedidos/pedido.repository.ts#PedidoRepository.salvar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pedidos/pedido.repository.ts",
+        "symbol": "PedidoRepository.salvar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "p",
+          "type": {
+            "ref": "Vendas.Pedido"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Vendas.Pedido"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "infra"
+        }
+      ]
+    },
+    "Vendas.PedidosService": {
+      "kind": "service",
+      "name": "PedidosService",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 102,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pedidos/pedidos.service.ts#PedidosService",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pedidos/pedidos.service.ts",
+        "symbol": "PedidosService",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "uses",
+          "target": "Vendas.PedidoRepository"
+        }
+      ]
+    },
+    "Vendas.PedidosService.criar": {
+      "kind": "op",
+      "name": "criar",
+      "parent": "Vendas.PedidosService",
+      "docs": "Cria um pedido a partir do carrinho atual do cliente.",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 104,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/pedidos/pedidos.service.ts#PedidosService.criar",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pedidos/pedidos.service.ts",
+        "symbol": "PedidosService.criar",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "clienteId",
+          "type": {
+            "ref": "uuid"
+          }
+        },
+        {
+          "name": "dto",
+          "type": {
+            "ref": "Vendas.CheckoutDto"
+          }
+        }
+      ],
+      "returns": {
+        "ref": "Vendas.Pedido"
+      },
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-010"
+        }
+      ]
+    },
+    "Vendas.PedidosService.marcarComoPago": {
+      "kind": "op",
+      "name": "marcarComoPago",
+      "parent": "Vendas.PedidosService",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 105,
+        "column": 5
+      },
+      "anchor": {
+        "raw": "apps/api/src/vendas/pedidos/pedidos.service.ts#PedidosService.marcarComoPago",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pedidos/pedidos.service.ts",
+        "symbol": "PedidosService.marcarComoPago",
+        "inherited": true,
+        "inferred": false
+      },
+      "params": [
+        {
+          "name": "pedidoId",
+          "type": {
+            "ref": "uuid"
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "aplicacao"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-020"
+        },
+        {
+          "type": "consumes",
+          "target": "Vendas.PagamentoConfirmado"
+        }
+      ]
+    },
+    "Vendas.RestPublica": {
+      "kind": "api",
+      "name": "RestPublica",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 142,
+        "column": 3
+      },
+      "protocol": "http",
+      "base": "/api/v1",
+      "relations": []
+    },
+    "Vendas.RestPublica.buscar": {
+      "kind": "endpoint",
+      "name": "buscar",
+      "parent": "Vendas.RestPublica",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 152,
+        "column": 5
+      },
+      "protocol": "http",
+      "method": "GET",
+      "path": "/api/v1/clientes/:id",
+      "params": [
+        {
+          "name": "id",
+          "type": {
+            "ref": "uuid"
+          },
+          "in": "path"
+        }
+      ],
+      "responses": [
+        {
+          "status": 200,
+          "type": {
+            "ref": "Vendas.Cliente"
+          }
+        },
+        {
+          "status": 404
+        }
+      ],
+      "auth": {
+        "scheme": "bearer",
+        "roles": [
+          "cliente",
+          "admin"
+        ]
+      },
+      "relations": [
+        {
+          "type": "handledBy",
+          "target": "Vendas.ClientesController.buscar"
+        }
+      ]
+    },
+    "Vendas.RestPublica.criar": {
+      "kind": "endpoint",
+      "name": "criar",
+      "parent": "Vendas.RestPublica",
+      "meta": {
+        "status": "active",
+        "tags": [
+          "publico"
+        ],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 145,
+        "column": 5
+      },
+      "protocol": "http",
+      "method": "POST",
+      "path": "/api/v1/clientes",
+      "body": {
+        "ref": "Vendas.CriarClienteDto"
+      },
+      "params": [],
+      "responses": [
+        {
+          "status": 201,
+          "type": {
+            "ref": "Vendas.Cliente"
+          }
+        },
+        {
+          "status": 409,
+          "type": {
+            "ref": "Vendas.ErroDto"
+          }
+        }
+      ],
+      "relations": [
+        {
+          "type": "handledBy",
+          "target": "Vendas.ClientesController.criar"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-001"
+        }
+      ]
+    },
+    "Vendas.RestPublica.finalizarCompra": {
+      "kind": "endpoint",
+      "name": "finalizarCompra",
+      "parent": "Vendas.RestPublica",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 159,
+        "column": 5
+      },
+      "protocol": "http",
+      "method": "POST",
+      "path": "/api/v1/checkout",
+      "body": {
+        "ref": "Vendas.CheckoutDto"
+      },
+      "params": [],
+      "responses": [
+        {
+          "status": 201,
+          "type": {
+            "ref": "Vendas.Pedido"
+          }
+        },
+        {
+          "status": 402,
+          "type": {
+            "ref": "Vendas.ErroDto"
+          }
+        },
+        {
+          "status": 422,
+          "type": {
+            "ref": "Vendas.ErroDto"
+          }
+        }
+      ],
+      "auth": {
+        "scheme": "bearer",
+        "roles": [
+          "cliente"
+        ]
+      },
+      "rateLimit": "10/min",
+      "relations": [
+        {
+          "type": "handledBy",
+          "target": "Vendas.CheckoutController.finalizar"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-010"
+        }
+      ]
+    },
+    "Vendas.StatusPedido": {
+      "kind": "enum",
+      "name": "StatusPedido",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 50,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pedidos/status.ts#StatusPedido",
+        "scheme": "code",
+        "path": "apps/api/src/vendas/pedidos/status.ts",
+        "symbol": "StatusPedido",
+        "inferred": false
+      },
+      "values": [
+        "PENDENTE",
+        "PAGO",
+        "ENVIADO",
+        "ENTREGUE",
+        "CANCELADO"
+      ],
+      "relations": []
+    },
+    "Vendas.eventos": {
+      "kind": "channel",
+      "name": "eventos",
+      "parent": "Vendas",
+      "meta": {
+        "status": "active",
+        "tags": [],
+        "owner": "time-vendas"
+      },
+      "source": {
+        "file": "planta/contextos/vendas.planta",
+        "line": 174,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "/apps/api/src/infra/filas.ts#EVENTOS_QUEUE",
+        "scheme": "code",
+        "path": "apps/api/src/infra/filas.ts",
+        "symbol": "EVENTOS_QUEUE",
+        "inferred": false
+      },
+      "channelKind": "queue",
+      "relations": [
+        {
+          "type": "inLayer",
+          "target": "infra"
+        }
+      ]
+    },
+    "Visitante": {
+      "kind": "actor",
+      "name": "Visitante",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 14,
+        "column": 1
+      },
+      "description": "Pessoa navegando sem login",
+      "relations": []
+    },
+    "Web": {
+      "kind": "app",
+      "name": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 11,
+        "column": 1
+      },
+      "appKind": "spa",
+      "framework": "react",
+      "root": "apps/web/src",
+      "routes": [
+        {
+          "path": "/",
+          "target": "Web.Home"
+        },
+        {
+          "path": "/produtos/:slug",
+          "target": "Web.DetalheProduto"
+        },
+        {
+          "path": "/cadastro",
+          "target": "Web.Cadastro"
+        },
+        {
+          "path": "/checkout",
+          "target": "Web.Checkout",
+          "guard": "Web.Autenticado"
+        }
+      ],
+      "relations": []
+    },
+    "Web.Autenticado": {
+      "kind": "guard",
+      "name": "Autenticado",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 52,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "routes/guards.tsx#RequireAuth",
+        "scheme": "code",
+        "path": "apps/web/src/routes/guards.tsx",
+        "symbol": "RequireAuth",
+        "inferred": false
+      },
+      "relations": []
+    },
+    "Web.Cadastro": {
+      "kind": "page",
+      "name": "Cadastro",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 28,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pages/Cadastro.tsx#Cadastro",
+        "scheme": "code",
+        "path": "apps/web/src/pages/Cadastro.tsx",
+        "symbol": "Cadastro",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "renders",
+          "target": "Web.FormCliente"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-001"
+        }
+      ]
+    },
+    "Web.Checkout": {
+      "kind": "page",
+      "name": "Checkout",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 33,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pages/Checkout.tsx#Checkout",
+        "scheme": "code",
+        "path": "apps/web/src/pages/Checkout.tsx",
+        "symbol": "Checkout",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "uses",
+          "target": "Web.sessao"
+        },
+        {
+          "type": "uses",
+          "target": "Web.carrinho"
+        },
+        {
+          "type": "calls",
+          "target": "Vendas.RestPublica.finalizarCompra"
+        },
+        {
+          "type": "renders",
+          "target": "Web.FormEndereco"
+        },
+        {
+          "type": "renders",
+          "target": "Web.FormPagamento"
+        },
+        {
+          "type": "justifiedBy",
+          "target": "req:REQ-010"
+        }
+      ]
+    },
+    "Web.DetalheProduto": {
+      "kind": "page",
+      "name": "DetalheProduto",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 23,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pages/DetalheProduto.tsx#DetalheProduto",
+        "scheme": "code",
+        "path": "apps/web/src/pages/DetalheProduto.tsx",
+        "symbol": "DetalheProduto",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "uses",
+          "target": "Web.carrinho"
+        },
+        {
+          "type": "calls",
+          "target": "Catalogo.RestCatalogo.buscarPorSlug"
+        }
+      ]
+    },
+    "Web.FormCliente": {
+      "kind": "component",
+      "name": "FormCliente",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 41,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "components/FormCliente.tsx#FormCliente",
+        "scheme": "code",
+        "path": "apps/web/src/components/FormCliente.tsx",
+        "symbol": "FormCliente",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "calls",
+          "target": "Vendas.RestPublica.criar"
+        }
+      ]
+    },
+    "Web.FormEndereco": {
+      "kind": "component",
+      "name": "FormEndereco",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 44,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "components/checkout/FormEndereco.tsx#FormEndereco",
+        "scheme": "code",
+        "path": "apps/web/src/components/checkout/FormEndereco.tsx",
+        "symbol": "FormEndereco",
+        "inferred": false
+      },
+      "relations": []
+    },
+    "Web.FormPagamento": {
+      "kind": "component",
+      "name": "FormPagamento",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 45,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "components/checkout/FormPagamento.tsx#FormPagamento",
+        "scheme": "code",
+        "path": "apps/web/src/components/checkout/FormPagamento.tsx",
+        "symbol": "FormPagamento",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "uses",
+          "target": "Stripe"
+        }
+      ]
+    },
+    "Web.Home": {
+      "kind": "page",
+      "name": "Home",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 18,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "pages/Home.tsx#Home",
+        "scheme": "code",
+        "path": "apps/web/src/pages/Home.tsx",
+        "symbol": "Home",
+        "inferred": false
+      },
+      "relations": [
+        {
+          "type": "calls",
+          "target": "Catalogo.RestCatalogo.destaques"
+        },
+        {
+          "type": "renders",
+          "target": "Web.VitrineProdutos"
+        }
+      ]
+    },
+    "Web.VitrineProdutos": {
+      "kind": "component",
+      "name": "VitrineProdutos",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 40,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "components/VitrineProdutos.tsx#VitrineProdutos",
+        "scheme": "code",
+        "path": "apps/web/src/components/VitrineProdutos.tsx",
+        "symbol": "VitrineProdutos",
+        "inferred": false
+      },
+      "relations": []
+    },
+    "Web.carrinho": {
+      "kind": "store",
+      "name": "carrinho",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 50,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "stores/carrinho.ts#useCarrinho",
+        "scheme": "code",
+        "path": "apps/web/src/stores/carrinho.ts",
+        "symbol": "useCarrinho",
+        "inferred": false
+      },
+      "relations": []
+    },
+    "Web.sessao": {
+      "kind": "store",
+      "name": "sessao",
+      "parent": "Web",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 49,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "stores/sessao.ts#useSessao",
+        "scheme": "code",
+        "path": "apps/web/src/stores/sessao.ts",
+        "symbol": "useSessao",
+        "inferred": false
+      },
+      "relations": []
+    },
+    "Worker": {
+      "kind": "app",
+      "name": "Worker",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/apps/apps.planta",
+        "line": 7,
+        "column": 1
+      },
+      "appKind": "worker",
+      "framework": "nestjs",
+      "root": "apps/api/src",
+      "routes": [],
+      "relations": [
+        {
+          "type": "contains",
+          "target": "Vendas.EmailListener"
+        },
+        {
+          "type": "contains",
+          "target": "Vendas.CarrinhoJobs"
+        }
+      ]
+    },
+    "aplicacao": {
+      "kind": "layer",
+      "name": "aplicacao",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 10,
+        "column": 1
+      },
+      "match": [
+        "**/*.service.ts",
+        "**/*.jobs.ts"
+      ],
+      "relations": []
+    },
+    "apresentacao": {
+      "kind": "layer",
+      "name": "apresentacao",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 9,
+        "column": 1
+      },
+      "match": [
+        "**/*.controller.ts",
+        "**/*.resolver.ts",
+        "**/*.listener.ts"
+      ],
+      "relations": []
+    },
+    "dominio": {
+      "kind": "layer",
+      "name": "dominio",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 11,
+        "column": 1
+      },
+      "match": [
+        "**/*.entity.ts",
+        "**/*.event.ts",
+        "**/domain/**"
+      ],
+      "relations": []
+    },
+    "infra": {
+      "kind": "layer",
+      "name": "infra",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/sistema.planta",
+        "line": 12,
+        "column": 1
+      },
+      "match": [
+        "**/*.repository.ts",
+        "**/*.gateway.ts",
+        "**/infra/**"
+      ],
+      "relations": []
+    },
+    "producao": {
+      "kind": "deployment",
+      "name": "producao",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 3,
+        "column": 1
+      },
+      "provider": "aws",
+      "region": "sa-east-1",
+      "iac": {
+        "kind": "terraform",
+        "path": "/infra/terraform/envs/prod"
+      },
+      "relations": []
+    },
+    "producao.api": {
+      "kind": "node",
+      "name": "api",
+      "parent": "producao.ecs",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 18,
+        "column": 9
+      },
+      "anchor": {
+        "raw": "tf:aws_ecs_service.api",
+        "scheme": "tf",
+        "address": "aws_ecs_service.api",
+        "inferred": false
+      },
+      "resourceType": "aws.ecs.service",
+      "replicas": 3,
+      "props": {
+        "cpu": 1024,
+        "memory": 2048
+      },
+      "relations": [
+        {
+          "type": "runs",
+          "target": "Api"
+        },
+        {
+          "type": "connectsTo",
+          "target": "producao.db",
+          "label": "TCP 5432"
+        },
+        {
+          "type": "connectsTo",
+          "target": "producao.filaEventos"
+        }
+      ]
+    },
+    "producao.cdn": {
+      "kind": "node",
+      "name": "cdn",
+      "parent": "producao",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 7,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "tf:aws_cloudfront_distribution.web",
+        "scheme": "tf",
+        "address": "aws_cloudfront_distribution.web",
+        "inferred": false
+      },
+      "resourceType": "aws.cloudfront",
+      "relations": [
+        {
+          "type": "connectsTo",
+          "target": "producao.site"
+        }
+      ]
+    },
+    "producao.db": {
+      "kind": "node",
+      "name": "db",
+      "parent": "producao.privada",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 25,
+        "column": 7
+      },
+      "anchor": {
+        "raw": "tf:aws_db_instance.main",
+        "scheme": "tf",
+        "address": "aws_db_instance.main",
+        "inferred": false
+      },
+      "resourceType": "aws.rds.postgres",
+      "props": {
+        "instance": "db.r6g.large",
+        "multiAz": true
+      },
+      "relations": [
+        {
+          "type": "stores",
+          "target": "Vendas"
+        },
+        {
+          "type": "stores",
+          "target": "Catalogo"
+        }
+      ]
+    },
+    "producao.ecs": {
+      "kind": "group",
+      "name": "ecs",
+      "parent": "producao.privada",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 17,
+        "column": 7
+      },
+      "anchor": {
+        "raw": "tf:aws_ecs_cluster.main",
+        "scheme": "tf",
+        "address": "aws_ecs_cluster.main",
+        "inferred": false
+      },
+      "groupKind": "cluster",
+      "resourceType": "aws.ecs.cluster",
+      "relations": []
+    },
+    "producao.email": {
+      "kind": "node",
+      "name": "email",
+      "parent": "producao",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 33,
+        "column": 3
+      },
+      "resourceType": "aws.ses",
+      "relations": []
+    },
+    "producao.filaEventos": {
+      "kind": "node",
+      "name": "filaEventos",
+      "parent": "producao",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 32,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "tf:aws_sqs_queue.eventos",
+        "scheme": "tf",
+        "address": "aws_sqs_queue.eventos",
+        "inferred": false
+      },
+      "resourceType": "aws.sqs",
+      "relations": [
+        {
+          "type": "carries",
+          "target": "Vendas.eventos"
+        },
+        {
+          "type": "connectsTo",
+          "target": "producao.worker"
+        }
+      ]
+    },
+    "producao.lb": {
+      "kind": "node",
+      "name": "lb",
+      "parent": "producao.publica",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 13,
+        "column": 7
+      },
+      "anchor": {
+        "raw": "tf:aws_lb.api",
+        "scheme": "tf",
+        "address": "aws_lb.api",
+        "inferred": false
+      },
+      "resourceType": "aws.alb",
+      "relations": [
+        {
+          "type": "connectsTo",
+          "target": "producao.api",
+          "label": "HTTP 3000"
+        }
+      ]
+    },
+    "producao.privada": {
+      "kind": "group",
+      "name": "privada",
+      "parent": "producao.vpc",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 16,
+        "column": 5
+      },
+      "groupKind": "zone",
+      "relations": []
+    },
+    "producao.publica": {
+      "kind": "group",
+      "name": "publica",
+      "parent": "producao.vpc",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 12,
+        "column": 5
+      },
+      "groupKind": "zone",
+      "relations": []
+    },
+    "producao.site": {
+      "kind": "node",
+      "name": "site",
+      "parent": "producao",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 8,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "tf:aws_s3_bucket.web",
+        "scheme": "tf",
+        "address": "aws_s3_bucket.web",
+        "inferred": false
+      },
+      "resourceType": "aws.s3",
+      "relations": [
+        {
+          "type": "runs",
+          "target": "Web"
+        }
+      ]
+    },
+    "producao.usuarios": {
+      "kind": "node",
+      "name": "usuarios",
+      "parent": "producao",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 5,
+        "column": 3
+      },
+      "resourceType": "actor.internet",
+      "relations": [
+        {
+          "type": "connectsTo",
+          "target": "producao.cdn"
+        },
+        {
+          "type": "connectsTo",
+          "target": "producao.lb",
+          "label": "HTTPS 443"
+        }
+      ]
+    },
+    "producao.vpc": {
+      "kind": "group",
+      "name": "vpc",
+      "parent": "producao",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 10,
+        "column": 3
+      },
+      "anchor": {
+        "raw": "tf:module.vpc",
+        "scheme": "tf",
+        "address": "module.vpc",
+        "inferred": false
+      },
+      "groupKind": "network",
+      "resourceType": "aws.vpc",
+      "relations": []
+    },
+    "producao.worker": {
+      "kind": "node",
+      "name": "worker",
+      "parent": "producao.ecs",
+      "meta": {
+        "status": "active",
+        "tags": []
+      },
+      "source": {
+        "file": "planta/infra/producao.planta",
+        "line": 22,
+        "column": 9
+      },
+      "anchor": {
+        "raw": "tf:aws_ecs_service.worker",
+        "scheme": "tf",
+        "address": "aws_ecs_service.worker",
+        "inferred": false
+      },
+      "resourceType": "aws.ecs.service",
+      "replicas": 2,
+      "relations": [
+        {
+          "type": "runs",
+          "target": "Worker"
+        },
+        {
+          "type": "connectsTo",
+          "target": "producao.db",
+          "label": "TCP 5432"
+        },
+        {
+          "type": "connectsTo",
+          "target": "producao.email"
+        }
+      ]
+    }
+  },
+  "requirements": {}
+}

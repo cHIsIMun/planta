@@ -1,0 +1,67 @@
+context Vendas root "/backend/src/main/java/com/loja/vendas" {
+
+  enum StatusCliente @"StatusCliente.java#StatusCliente" { ATIVO, BLOQUEADO }
+
+  entity Cliente @"Cliente.java#Cliente" {
+    id: long key
+    email: email unique max(255)
+    nome: string
+    status: StatusCliente
+    limite: decimal precision(12, 2)
+    ultimoAcesso: datetime?
+    pedidos: Pedido[]
+  }
+
+  entity Pedido @"Pedido.java#Pedido" {
+    id: long key
+    cliente: Cliente
+    total: decimal precision(12, 2)
+  }
+
+  dto CriarClienteRequest @"CriarClienteRequest.java#CriarClienteRequest"
+
+  repository ClienteRepository @"ClienteRepository.java#ClienteRepository"
+
+  service ClienteService @"ClienteService.java#ClienteService" {
+    op criar(pedido: CriarClienteRequest) -> Cliente
+    op buscarPorId(id: long) -> Cliente @"#ClienteService.buscar(Long)"
+    op buscarPorEmail(email: string) -> Cliente @"#ClienteService.buscar(String)"
+    uses ClienteRepository
+  }
+
+  controller ClienteController @"ClienteController.java#ClienteController" {
+    op criar(pedido: CriarClienteRequest) -> Cliente
+    op buscar(id: long) -> Cliente
+    op buscarPorEmail(email: string) -> Cliente
+    uses ClienteService
+  }
+
+  component EmailListener @"EmailListener.java#EmailListener" {
+    op boasVindas(evento: ClienteCadastrado)
+    op reenviarPendentes()
+  }
+
+  api Rest http base "/api" {
+    endpoint POST "/clientes" => ClienteController.criar {
+      body CriarClienteRequest
+      returns 201 Cliente
+    }
+    endpoint GET "/clientes/:id" => ClienteController.buscar
+    endpoint GET "/clientes/busca" => ClienteController.buscarPorEmail
+  }
+
+  event ClienteCadastrado @"ClienteCadastrado.java#ClienteCadastrado" {
+    clienteId: long
+  }
+
+  on ClienteCadastrado => EmailListener.boasVindas
+
+  job ReenviarPendentes cron "0 0 3 * * *" => EmailListener.reenviarPendentes
+
+  process CadastrarCliente {
+    trigger Rest.criar
+    verify order
+    step persistir: ClienteService.criar
+    step notificar: emit ClienteCadastrado
+  }
+}

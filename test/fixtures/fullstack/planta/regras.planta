@@ -1,0 +1,30 @@
+rule CamadasLimpas severity error {
+  layer apresentacao may depend on layer aplicacao
+  layer apresentacao may depend on layer dominio
+  layer aplicacao may depend on layer dominio
+  layer aplicacao may depend on layer infra
+  layer infra may depend on layer dominio
+  layer dominio must not depend on layer infra
+  layer dominio must not depend on layer apresentacao
+}
+
+rule ContextosIsolados severity error {
+  context Catalogo must not depend on context Vendas
+  context Vendas must not depend on context Catalogo except via event
+}
+
+rule FrontendSoPelaApi severity error {
+  app Web must not depend on context Vendas except via endpoint
+  app Web must not depend on context Catalogo except via endpoint
+}
+
+rule Rastreabilidade severity warning {
+  every process must have justifiedBy
+  every entity where tag = pii must have owner
+}
+
+rule Convencoes severity warning {
+  every service must match ".*Service$"
+  every repository must be in layer infra
+  every controller must not depend on every repository
+}

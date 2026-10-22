@@ -1,0 +1,39 @@
+version: 1
+system: Loja
+projectRoot: ..
+
+extractors:
+  - use: nestjs
+    root: apps/api/src
+  - use: typeorm
+    root: apps/api/src
+  - use: react
+    root: apps/web/src
+  - use: terraform
+    root: infra/terraform
+  - use: imports
+    root: apps
+  - use: markdown-requirements
+    paths: ["docs/requisitos/**/*.md"]
+    idPattern: "REQ-\\d{3}"
+  - use: markdown-decisions
+    paths: ["docs/adr/*.md"]
+    idPattern: "ADR-\\d{4}"
+
+coverage:
+  require:
+    - entity
+    - http.endpoint
+    - event.handler
+    - job
+    - ui.route
+  warn:
+    - service
+    - iac.resource
+  ignore:
+    - "**/*.spec.ts"
+
+drift:
+  signatureChange: error
+  bodyChange: info
+  requirementChange: warning

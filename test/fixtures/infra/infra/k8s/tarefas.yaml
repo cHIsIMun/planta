@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: reenvio
+  namespace: loja
+spec:
+  schedule: "0 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: reenvio
+              image: loja/worker:1.4
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+  namespace: loja
+data:
+  LOG_LEVEL: info

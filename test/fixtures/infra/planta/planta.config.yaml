@@ -1,0 +1,15 @@
+version: 1
+system: Loja
+projectRoot: ..
+
+extractors:
+  - use: aws-cdk
+    root: infra/cdk/cdk.out
+  - use: kubernetes
+    root: infra/k8s
+  - use: compose
+    root: docker-compose.yml
+
+coverage:
+  warn:
+    - iac.resource

@@ -1,0 +1,14 @@
+version: 1
+system: Loja
+projectRoot: ..
+
+extractors:
+  - use: django
+    root: backend
+
+coverage:
+  require:
+    - entity
+    - http.endpoint
+    - event.handler
+    - job

@@ -1,0 +1,51 @@
+{
+  "Resources": {
+    "RedeVpc8A3B2C1D": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": { "CidrBlock": "10.0.0.0/16", "EnableDnsHostnames": true },
+      "Metadata": { "aws:cdk:path": "LojaStack/Rede/Vpc/Resource" }
+    },
+    "RedeVpcPublicSubnet1Subnet5C2D37C4": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": { "CidrBlock": "10.0.0.0/24", "VpcId": { "Ref": "RedeVpc8A3B2C1D" } },
+      "Metadata": { "aws:cdk:path": "LojaStack/Rede/Vpc/PublicSubnet1/Subnet" }
+    },
+    "ApiClusterE5B3A1F0": {
+      "Type": "AWS::ECS::Cluster",
+      "Metadata": { "aws:cdk:path": "LojaStack/Api/Cluster/Resource" }
+    },
+    "ApiTaskDefTaskRole1EDB4A67": {
+      "Type": "AWS::IAM::Role",
+      "Properties": { "AssumeRolePolicyDocument": { "Version": "2012-10-17" } },
+      "Metadata": { "aws:cdk:path": "LojaStack/Api/TaskDef/TaskRole/Resource" }
+    },
+    "ApiTaskDef6C0C9F1B": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": { "Cpu": "512", "Memory": "1024", "TaskRoleArn": { "Fn::GetAtt": ["ApiTaskDefTaskRole1EDB4A67", "Arn"] } },
+      "Metadata": { "aws:cdk:path": "LojaStack/Api/TaskDef/Resource" }
+    },
+    "ApiService6A1D3E25": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": { "Ref": "ApiClusterE5B3A1F0" },
+        "DesiredCount": 2,
+        "TaskDefinition": { "Ref": "ApiTaskDef6C0C9F1B" }
+      },
+      "Metadata": { "aws:cdk:path": "LojaStack/Api/Service/Resource" }
+    },
+    "BancoInstanceC1063A87": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": { "Engine": "postgres", "DBInstanceClass": "db.t4g.medium", "MultiAZ": true },
+      "Metadata": { "aws:cdk:path": "LojaStack/Banco/Instance/Resource" }
+    },
+    "FilaE6C7B5A2": {
+      "Type": "AWS::SQS::Queue",
+      "Metadata": { "aws:cdk:path": "LojaStack/Fila/Resource" }
+    },
+    "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": { "Analytics": "v2:deflate64:H4sI" },
+      "Metadata": { "aws:cdk:path": "LojaStack/CDKMetadata/Default" }
+    }
+  }
+}

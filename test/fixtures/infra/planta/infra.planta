@@ -1,0 +1,39 @@
+deployment aws provider aws region "sa-east-1" source cdk "/infra/cdk/cdk.out" {
+
+  network vpc: aws.vpc @"cdk:LojaStack/Rede/Vpc" {
+    cluster ecs: aws.ecs.cluster @"cdk:LojaStack/Api/Cluster" {
+      api: aws.ecs.service runs Api replicas 2 @"cdk:LojaStack/Api/Service" {
+        cpu = 512
+        memory = 1024
+      }
+    }
+    db: aws.rds.postgres @"cdk:LojaStack/Banco/Instance" {
+      instance = "db.t4g.medium"
+      multiAz = true
+    }
+  }
+
+  fila: aws.sqs @"cdk:LojaStack/Fila"
+
+  api -> db "TCP 5432"
+  api -> fila
+}
+
+deployment cluster provider k8s source k8s "/infra/k8s" {
+  svc: k8s.service @"k8s:Service/loja/api"
+  api: k8s.deployment runs Api replicas 3 @"k8s:Deployment/loja/api" {
+    image = "loja/api:1.4"
+  }
+  reenvio: k8s.cronjob runs Worker @"k8s:CronJob/loja/reenvio" {
+    schedule = "0 3 * * *"
+  }
+  svc -> api
+}
+
+deployment local provider docker source compose "/docker-compose.yml" {
+  api: docker.container runs Api @"compose:api"
+  db: docker.container @"compose:postgres" {
+    image = "postgres:16"
+  }
+  api -> db
+}

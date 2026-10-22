@@ -1,0 +1,30 @@
+context Vendas root "/backend/app" {
+
+  dto CriarCliente @"schemas.py#CriarCliente" {
+    email: email
+    nome: string
+  }
+
+  dto Cliente @"schemas.py#Cliente" {
+    email: email
+    nome: string
+    id: int
+    criado_em: datetime
+    apelido: string?
+  }
+
+  controller Clientes {
+    op criar(dados: CriarCliente) -> Cliente @"routers/clientes.py#criar"
+    op buscar(cliente_id: int) -> Cliente @"routers/clientes.py#buscar"
+    op listar() -> Cliente[] @"routers/clientes.py#listar"
+  }
+
+  api Rest http base "/api/v1" {
+    endpoint POST "/clientes" => Clientes.criar {
+      body CriarCliente
+      returns 201 Cliente
+    }
+    endpoint GET "/clientes/:cliente_id" => Clientes.buscar
+    endpoint GET "/clientes" => Clientes.listar
+  }
+}

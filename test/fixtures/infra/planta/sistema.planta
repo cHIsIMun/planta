@@ -1,0 +1,6 @@
+system Loja {
+  description "Infraestrutura da loja em três sabores de IaC"
+}
+
+app Api kind backend framework nestjs
+app Worker kind worker framework nestjs

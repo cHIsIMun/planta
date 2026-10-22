@@ -1,0 +1,7 @@
+node_modules/
+dist/
+*.tgz
+*.vsix
+.DS_Store
+editors/vscode/out/
+editors/vscode/.vscode-test/

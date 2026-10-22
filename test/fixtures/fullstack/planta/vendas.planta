@@ -1,0 +1,84 @@
+/// Clientes e pedidos.
+context Vendas root "/apps/api/src/vendas" {
+
+  entity Cliente @"clientes/cliente.entity.ts#Cliente" {
+    id: uuid key
+    email: string unique max(255)
+    nome: string
+    pedidos: Pedido[] inverse(cliente)
+    criadoEm: datetime
+  }
+
+  entity Pedido @"pedidos/pedido.entity.ts#Pedido" {
+    id: uuid key
+    cliente: Cliente inverse(pedidos)
+    total: decimal precision(12, 2)
+    observacao: text?
+  }
+
+  dto CriarClienteDto @"clientes/dto/criar-cliente.dto.ts#CriarClienteDto"
+
+  controller ClientesController @"clientes/clientes.controller.ts#ClientesController" {
+    op criar(dto: CriarClienteDto) -> Cliente
+    op buscar(id: uuid) -> Cliente?
+    uses ClientesService
+  }
+
+  service ClientesService @"clientes/clientes.service.ts#ClientesService" {
+    op criar(dto: CriarClienteDto) -> Cliente justifiedBy "REQ-001"
+    op buscar(id: uuid) -> Cliente?
+    uses ClienteRepository
+  }
+
+  repository ClienteRepository @"clientes/cliente.repository.ts#ClienteRepository" {
+    op salvar(cliente: Cliente) -> Cliente
+  }
+
+  controller PedidosController @"pedidos/pedidos.controller.ts#PedidosController" {
+    op finalizarCompra(dados: json) -> Pedido
+  }
+
+  component EmailListener @"notificacoes/email.listener.ts#EmailListener" {
+    decidedBy "ADR-0001"
+    op enviarBoasVindas(evento: ClienteCadastrado)
+    op reenviarPendentes()
+  }
+
+  api RestPublica http base "/api/v1" {
+    endpoint POST "/clientes" => ClientesController.criar {
+      body CriarClienteDto
+      returns 201 Cliente
+      justifiedBy "REQ-001"
+    }
+    endpoint GET "/clientes/:id" => ClientesController.buscar {
+      param id: uuid in path
+      returns 200 Cliente
+      justifiedBy "REQ-002"
+    }
+    endpoint POST "/pedidos" => PedidosController.finalizarCompra {
+      body json
+      returns 201 Pedido
+    }
+  }
+
+  channel eventos kind queue
+
+  event ClienteCadastrado {
+    clienteId: uuid
+  }
+
+  on ClienteCadastrado => EmailListener.enviarBoasVindas
+
+  job ReenviarEmails cron "0 3 * * *" => EmailListener.reenviarPendentes
+
+  process CadastrarCliente {
+    justifiedBy "REQ-001"
+    actor Visitante
+    trigger RestPublica.criar
+    verify order
+
+    step persistir: ClientesService.criar
+    step notificar: emit ClienteCadastrado
+    return Cliente
+  }
+}
