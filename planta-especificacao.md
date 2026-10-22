@@ -2686,7 +2686,7 @@ filaEventos -> vpc.privada.ecs.worker
 
 ### 13.5 Visualizador web
 
-`planta serve` abre um visualizador local (e `planta export-site` gera uma versão estática para publicar). Funcionalidades:
+`planta serve` abre um visualizador local (e `planta export-site` gera uma versão estática para publicar). A primeira coisa que ele mostra é o estado da verificação: se a planta confere com o código e, se não, os problemas agrupados pelo que fazer com eles (corrigir a âncora, descrever o código novo, revisar e aceitar, decidir entre planta e código, respeitar a regra), cada um com o elemento e o arquivo. Sem extratores ou com `--fast`, ele diz que a planta não foi conferida, em vez de dizer que confere. Funcionalidades:
 
 **Navegação por níveis.** Sistema → contextos e apps → componentes → operações, no estilo de zoom do modelo C4. Cada elemento tem uma página com documentação, relações, requisitos, dono, status e histórico.
 

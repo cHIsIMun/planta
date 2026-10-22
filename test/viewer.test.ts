@@ -42,19 +42,33 @@ describe("visualizador", () => {
     assert.equal(JSON.parse(json).ir.elements.Vendas.docs, 'Doc com <img src=x onerror="window.pwned=1"> e </script>.');
   });
 
-  it("árvore de elementos e visão geral", () => {
+  type Win = ReturnType<typeof open>;
+  const text = (w: Win, sel = "main") => w.document.querySelector(sel)!.textContent!;
+  const navLinks = (w: Win) => [...w.document.querySelectorAll(".side a")].map((a) => a.textContent);
+
+  it("visão geral: o estado da verificação primeiro, depois o mapa do sistema", () => {
     const w = open(site);
-    const tree = [...w.document.querySelectorAll(".tree a")].map((a) => a.textContent);
-    assert.deepEqual(tree, ["contextVendas", "entityCliente", "repositoryR", "serviceS", "opcriar"]);
-    assert.match(w.document.getElementById("main")!.textContent!, /Loja de teste/);
+    assert.deepEqual(navLinks(w), ["Visão geral", "Saúde", "Diagramas", "Vendas"]);
+    assert.match(text(w), /Loja de teste/);
+    assert.match(text(w, ".state"), /A planta confere com o código\./);
+    assert.match(text(w, ".place"), /Vendas.*1 entidade, 2 serviços|Vendas/);
+    assert.equal(w.document.getElementById("status-pill")!.textContent, "Confere com o código");
   });
 
-  it("página de elemento: campos, relações e quem usa", () => {
-    const w = open(site, "#/e/Vendas.S");
-    const main = w.document.getElementById("main")!.textContent!;
-    assert.match(main, /Relações/);
-    assert.match(w.document.getElementById("main")!.innerHTML, /href="#\/e\/Vendas\.R"/);
-    const cliente = open(site, "#/e/Vendas.Cliente").document.getElementById("main")!.textContent!;
+  it("sem verificação contra o código, diz isso em vez de dizer que confere", () => {
+    const w = open({ ...site, verified: false });
+    assert.match(text(w, ".state"), /não foi conferida com o código/);
+    assert.equal(w.document.getElementById("status-pill")!.textContent, "Não conferida");
+  });
+
+  it("página de elemento: campos, operações e ligações nos dois sentidos", () => {
+    const s = text(open(site, "#/e/Vendas.S"));
+    assert.match(s, /Operações/);
+    assert.match(s, /criar\(\) → Cliente/);
+    assert.match(s, /Ligações.*Usa.*R/s);
+    assert.ok(open(site, "#/e/Vendas.S").document.querySelector('main a[href="#/e/Vendas.R"]'));
+    assert.match(text(open(site, "#/e/Vendas.R")), /Usado por.*S/s);
+    const cliente = text(open(site, "#/e/Vendas.Cliente"));
     assert.match(cliente, /email/);
     assert.match(cliente, /unique/);
   });
@@ -63,10 +77,35 @@ describe("visualizador", () => {
     const w = open(site, "#/e/Vendas");
     assert.equal(w.document.querySelector("main img"), null);
     assert.equal((w as unknown as { pwned?: number }).pwned, undefined);
-    assert.match(w.document.getElementById("main")!.textContent!, /<img src=x/);
+    assert.match(text(w), /<img src=x/);
   });
 
-  it("requisitos dos documentos: grupo na árvore, página e links nas relações", () => {
+  it("saúde: problemas agrupados pelo que fazer, com o elemento e o arquivo", () => {
+    const loc = site.ir.elements["Vendas.S"]!.source;
+    const broken: SiteData = { ...site, diagnostics: [
+      { code: "PL401", severity: "error", message: "`Vendas.S`: assinatura alterada desde a revisão", loc: { file: loc.file, line: loc.line, column: 1 } },
+      { code: "PL301", severity: "error", message: "cobertura: rota GET /x não aparece na planta", loc: { file: "src/x.ts", line: 4, column: 1 } },
+    ] };
+    const w = open(broken, "#/saude");
+    const titles = [...w.document.querySelectorAll(".problem h3")].map((h) => h.textContent);
+    assert.deepEqual(titles.sort(), ["Código que a planta não descreve (1)", "Mudanças esperando revisão (1)"]);
+    assert.match(text(w), /npx planta suggest --uncovered/);
+    assert.ok(w.document.querySelector('.problem .msg a[href="#/e/Vendas.S"]'), "o ID entre crases vira link");
+    assert.ok(w.document.querySelector('.problem a[href="vscode://file//projeto/src/x.ts:4"]'));
+    assert.equal(w.document.getElementById("status-pill")!.textContent, "2 erros");
+    assert.match(text(open(broken), ".state"), /A planta e o código divergem\./);
+    // O problema de uma operação aparece no serviço e no contexto que a contêm.
+    assert.match(text(open(broken, "#/e/Vendas")), /1 problema/);
+  });
+
+  it("componente de backend fica em Componentes, não em Telas", () => {
+    const w = open(data(`system X {}\ncontext C {\n  component Publicador\n  service S\n}`), "#/e/C");
+    const sections = [...w.document.querySelectorAll("main h2.section")].map((h) => h.textContent);
+    assert.ok(sections.includes("Componentes"));
+    assert.ok(!sections.includes("Telas"));
+  });
+
+  it("requisitos dos documentos: lista, página e links nas relações", () => {
     const withReqs: SiteData = {
       ...site,
       ir: {
@@ -85,21 +124,23 @@ describe("visualizador", () => {
       review: { "Vendas.S": "changed" },
     };
     const w = open(withReqs, "#/r/req%3AREQ-001");
-    const main = w.document.getElementById("main")!;
-    assert.match(main.textContent!, /REQ-001 Cadastro/);
-    assert.match(main.textContent!, /O cliente se cadastra\./);
-    assert.match(main.textContent!, /alterado/);
-    assert.ok([...w.document.querySelectorAll(".tree a")].some((a) => a.textContent === "REQ-001Cadastro"));
-    const el = open(withReqs, "#/e/Vendas.S").document.getElementById("main")!;
-    assert.ok(el.querySelector('a[href="#/r/req%3AREQ-001"]'));
+    assert.match(text(w), /REQ-001 Cadastro/);
+    assert.match(text(w), /O cliente se cadastra\./);
+    assert.match(text(w), /Mudou desde a revisão/);
+    assert.ok(navLinks(w).some((t) => t?.startsWith("Todos os requisitos")));
+    assert.match(text(open(withReqs, "#/requisitos")), /REQ-001 Cadastro/);
+    assert.ok(open(withReqs, "#/e/Vendas.S").document.querySelector('main a[href="#/r/req%3AREQ-001"]'));
   });
 
-  it("filtro da árvore", () => {
+  it("busca com ⌘K encontra elementos por nome, sem acento e com o contexto", () => {
     const w = open(site);
-    const input = w.document.getElementById("search") as HTMLInputElement;
-    input.value = "cliente";
+    w.dispatchEvent(new w.KeyboardEvent("keydown", { key: "k", metaKey: true }));
+    assert.equal((w.document.getElementById("finder") as HTMLElement).hidden, false);
+    const input = w.document.getElementById("find-input") as HTMLInputElement;
+    input.value = "clIente";
     input.dispatchEvent(new w.Event("input"));
-    assert.deepEqual([...w.document.querySelectorAll(".tree a")].map((a) => a.textContent), ["contextVendas", "entityCliente"]);
+    const results = [...w.document.querySelectorAll("#find-results a")].map((a) => a.textContent);
+    assert.deepEqual(results, ["ClienteEntidade em Vendas"]);
   });
 });
 

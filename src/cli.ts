@@ -642,6 +642,8 @@ async function siteHtml(dirOption: string, fast: boolean, io: Io): Promise<strin
     diagrams,
     diagnostics: [...project.model.diagnostics, ...(result?.diagnostics ?? [])].sort(byLocation),
     review: Object.fromEntries([...(result?.reviewables.values() ?? [])].map((r) => [r.id, r.state])),
+    verified: result !== undefined,
+    ...(result && { facts: result.facts.length }),
   });
 }
 
