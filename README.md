@@ -31,7 +31,7 @@ Requer Node.js 22 ou mais recente. A CLI é publicada nos
 versão desejada como dependência de desenvolvimento do projeto:
 
 ```sh
-npm install -D https://github.com/cHIsIMun/planta/releases/download/v0.1.1/planta-0.1.1.tgz
+npm install -D https://github.com/cHIsIMun/planta/releases/download/v0.1.2/planta-0.1.2.tgz
 npx planta --version
 ```
 
@@ -43,7 +43,7 @@ mantém o `package-lock.json` reproduzível no CI.
 Baixe o `planta-vscode-*.vsix` do release e instale:
 
 ```sh
-code --install-extension planta-vscode-0.1.1.vsix
+code --install-extension planta-vscode-0.1.2.vsix
 ```
 
 A extensão usa o `node_modules/.bin/planta` do projeto (ou o comando definido em

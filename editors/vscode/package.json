@@ -2,7 +2,7 @@
   "name": "planta-vscode",
   "displayName": "Planta",
   "description": "Linguagem de especificação arquitetural ancorada em código: diagnósticos, completar de âncoras, navegação e CodeLens no código.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "planta",
   "license": "MIT",
   "repository": {
