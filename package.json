@@ -47,7 +47,8 @@
     "typecheck": "tsc -p .",
     "planta": "tsx src/cli.ts",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "prepack": "pnpm run build"
+    "prepack": "pnpm run build",
+    "site": "tsx scripts/site.ts"
   },
   "dependencies": {
     "@tree-sitter-grammars/tree-sitter-hcl": "1.2.0",
@@ -67,7 +68,9 @@
     "@types/node": "^26.6.5",
     "antlr-ng": "^1.0.10",
     "jsdom": "29.1.1",
+    "marked": "^18.1.1",
     "mermaid": "11.17.2",
+    "shiki": "^4.5.0",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }

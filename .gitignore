@@ -5,3 +5,4 @@ dist/
 .DS_Store
 editors/vscode/out/
 editors/vscode/.vscode-test/
+_site/

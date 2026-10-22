@@ -21,8 +21,8 @@ context Vendas root "/apps/api/src/vendas" {
 }
 ```
 
-A especificação completa da linguagem está em
-[`planta-especificacao.md`](planta-especificacao.md).
+Documentação: **https://chisimun.github.io/planta/** (gerada a partir de
+[`planta-especificacao.md`](planta-especificacao.md)).
 
 ## Instalação
 
@@ -82,6 +82,9 @@ pnpm run typecheck
 pnpm run build      # compila para dist/
 pnpm planta check   # roda a CLI direto do código-fonte
 ```
+
+O site de documentação é gerado por `pnpm run site` (saída em `_site/`) e
+publicado no GitHub Pages a cada mudança na especificação.
 
 A gramática está em `grammar/Planta.g4` (`pnpm run generate` regenera o
 parser) e precisa continuar idêntica à seção 7 da especificação.
